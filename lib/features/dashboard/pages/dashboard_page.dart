@@ -87,7 +87,7 @@ class DashboardPage extends StatelessWidget {
                               child: Icon(
                                 Icons.person,
                                 size: 40,
-                                color: Colors.white,
+                                color: Colors.grey[600],
                               ),
                             ),
                             const SizedBox(width: 24),
@@ -318,7 +318,7 @@ class _DashboardCard extends StatelessWidget {
               Icon(
                 icon,
                 size: 48,
-                color: Colors.white,
+                color: Colors.grey[600],
               ),
               const SizedBox(height: 16),
               Text(

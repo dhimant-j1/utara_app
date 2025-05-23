@@ -8,10 +8,10 @@ import 'core/stores/auth_store.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize dependency injection
   await setupServiceLocator();
-  
+
   runApp(const UtaraApp());
 }
 
@@ -31,7 +31,6 @@ class UtaraApp extends StatelessWidget {
           return MaterialApp.router(
             title: 'Utara App',
             theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
             themeMode: ThemeMode.system,
             routerConfig: AppRouter.router,
             debugShowCheckedModeBanner: false,
