@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:utara_app/features/rooms/repository/room_repository.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../stores/auth_store.dart';
@@ -8,7 +9,9 @@ final GetIt getIt = GetIt.instance;
 Future<void> setupServiceLocator() async {
   // Services
   getIt.registerLazySingleton<ApiService>(() => ApiService());
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt<ApiService>()));
+  getIt.registerLazySingleton<AuthService>(
+      () => AuthService(getIt<ApiService>()));
+  getIt.registerLazySingleton(() => RoomRepository(getIt<ApiService>()));
 
   // Stores
   final authStore = AuthStore(getIt<AuthService>());
@@ -21,4 +24,4 @@ Future<void> setupServiceLocator() async {
   if (authStore.token != null) {
     getIt<ApiService>().setAuthToken(authStore.token);
   }
-} 
+}

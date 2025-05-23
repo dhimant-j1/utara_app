@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 class RoomDetailsPage extends StatelessWidget {
   final String roomId;
-  
+
   const RoomDetailsPage({
     super.key,
     required this.roomId,
@@ -43,4 +43,4 @@ class RoomDetailsPage extends StatelessWidget {
       ),
     );
   }
-} 
+}
