@@ -16,6 +16,7 @@ import '../../features/food_passes/pages/food_passes_list_page.dart';
 import '../../features/food_passes/pages/generate_food_passes_page.dart';
 import '../../features/food_passes/pages/scan_food_pass_page.dart';
 import '../../features/dashboard/pages/dashboard_page.dart';
+import '../../features/users/pages/create_user_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -43,19 +44,19 @@ class AppRouter {
         path: '/auth/signup',
         builder: (context, state) => const SignupPage(),
       ),
-      
+
       // Dashboard route
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashboardPage(),
       ),
-      
+
       // Profile route
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfilePage(),
       ),
-      
+
       // Room routes
       GoRoute(
         path: '/rooms',
@@ -87,7 +88,7 @@ class AppRouter {
           ),
         ],
       ),
-      
+
       // Room request routes
       GoRoute(
         path: '/room-requests',
@@ -106,7 +107,12 @@ class AppRouter {
           ),
         ],
       ),
-      
+
+      GoRoute(
+        path: '/users/create',
+        builder: (context, state) => const CreateUserPage(),
+      ),
+
       // Food pass routes
       GoRoute(
         path: '/food-passes',
@@ -131,4 +137,4 @@ class AppRouter {
       ),
     ],
   );
-} 
+}

@@ -223,7 +223,7 @@ class DashboardPage extends StatelessWidget {
                             icon: Icons.person_add,
                             title: 'Create User',
                             subtitle: 'Add new user account',
-                            onTap: () => context.go('/auth/signup'),
+                            onTap: () => context.go('/users/create'),
                           ),
                         ],
                       ),
