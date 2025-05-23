@@ -7,7 +7,7 @@ class ApiService {
 
   ApiService({String? baseUrl}) {
     _dio = Dio(BaseOptions(
-      baseUrl: baseUrl ?? 'http://localhost:8080',
+      baseUrl: baseUrl ?? 'http://43.205.243.240:8080',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
@@ -35,4 +35,4 @@ class ApiService {
   void updateBaseUrl(String baseUrl) {
     _dio.options.baseUrl = baseUrl;
   }
-} 
+}
