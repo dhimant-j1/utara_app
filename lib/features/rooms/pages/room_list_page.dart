@@ -37,24 +37,43 @@ class _RoomListPageState extends State<RoomListPage> {
 
   Widget _buildRoomCard(Map<String, dynamic> room) {
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Room ${room['room_number']}',
-              style: Theme.of(context).textTheme.titleLarge,
+            Icon(
+              Icons.meeting_room,
+              size: 40,
+              color: Theme.of(context).colorScheme.primary,
             ),
-            const SizedBox(height: 8),
-            Text('Floor: ${room['floor']}'),
-            Text('Type: ${room['type']}'),
-            Text('AC: ${room['has_ac'] ? 'Yes' : 'No'}'),
-            Text('Geyser: ${room['has_geyser'] ? 'Yes' : 'No'}'),
-            const SizedBox(height: 8),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Room ${room['room_number']}',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 4),
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 4,
+                    children: [
+                      Text('Floor: ${room['floor']}'),
+                      Text('Type: ${room['type']}'),
+                      Text('AC: ${room['has_ac'] ? 'Yes' : 'No'}'),
+                      Text('Geyser: ${room['has_geyser'] ? 'Yes' : 'No'}'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
             ElevatedButton(
               onPressed: () {
-                // Will implement navigation to details page later
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Room details coming soon')),
                 );
@@ -63,6 +82,22 @@ class _RoomListPageState extends State<RoomListPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveList(BuildContext context) {
+    final isWide = MediaQuery.of(context).size.width > 700;
+    final padding = isWide
+        ? EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.15)
+        : EdgeInsets.zero;
+
+    return Padding(
+      padding: padding,
+      child: ListView.builder(
+        itemCount: _rooms!.length,
+        itemBuilder: (context, index) => _buildRoomCard(_rooms![index]),
       ),
     );
   }
@@ -115,19 +150,7 @@ class _RoomListPageState extends State<RoomListPage> {
                     )
                   : RefreshIndicator(
                       onRefresh: _loadRooms,
-                      child: GridView.builder(
-                        padding: const EdgeInsets.all(16),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.85,
-                        ),
-                        itemCount: _rooms!.length,
-                        itemBuilder: (context, index) =>
-                            _buildRoomCard(_rooms![index]),
-                      ),
+                      child: _buildResponsiveList(context),
                     ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go('/rooms/create'),
