@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:utara_app/core/di/service_locator.dart';
+import 'package:utara_app/core/stores/auth_store.dart';
 
 class RoomRequestRepository {
   static const baseUrl = 'http://localhost:8080'; // From swagger.yaml
@@ -11,11 +13,12 @@ class RoomRequestRepository {
     required String preferredType,
     String? specialRequests,
   }) async {
+    AuthStore authStore = getIt<AuthStore>();
     final response = await http.post(
-      Uri.parse('$baseUrl/room-requests'),
+      Uri.parse('$baseUrl/room-requests/'),
       headers: {
         'Content-Type': 'application/json',
-        // Add auth token header when auth is implemented
+        'Authorization': 'Bearer ${authStore.token}'
       },
       body: jsonEncode({
         'check_in_date': checkInDate.toUtc().toIso8601String(),
