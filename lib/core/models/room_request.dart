@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'room.dart';
+import 'room_assignment.dart';
 
 part 'room_request.g.dart';
 
@@ -36,6 +37,8 @@ class RoomRequest {
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
+  final Room? room;
+  final RoomAssignment? assignment;
 
   const RoomRequest({
     required this.id,
@@ -50,9 +53,12 @@ class RoomRequest {
     this.processedAt,
     required this.createdAt,
     required this.updatedAt,
+    this.room,
+    this.assignment,
   });
 
-  factory RoomRequest.fromJson(Map<String, dynamic> json) => _$RoomRequestFromJson(json);
+  factory RoomRequest.fromJson(Map<String, dynamic> json) =>
+      _$RoomRequestFromJson(json);
   Map<String, dynamic> toJson() => _$RoomRequestToJson(this);
 
   RoomRequest copyWith({
@@ -68,6 +74,8 @@ class RoomRequest {
     DateTime? processedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Room? room,
+    RoomAssignment? assignment,
   }) {
     return RoomRequest(
       id: id ?? this.id,
@@ -82,6 +90,8 @@ class RoomRequest {
       processedAt: processedAt ?? this.processedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      room: room ?? this.room,
+      assignment: assignment ?? this.assignment,
     );
   }
 
@@ -93,4 +103,4 @@ class RoomRequest {
   bool get isApproved => status == RequestStatus.approved;
   bool get isRejected => status == RequestStatus.rejected;
   bool get isProcessed => isApproved || isRejected;
-} 
+}

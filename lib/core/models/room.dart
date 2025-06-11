@@ -49,7 +49,8 @@ class RoomImage {
     required this.uploadedAt,
   });
 
-  factory RoomImage.fromJson(Map<String, dynamic> json) => _$RoomImageFromJson(json);
+  factory RoomImage.fromJson(Map<String, dynamic> json) =>
+      _$RoomImageFromJson(json);
   Map<String, dynamic> toJson() => _$RoomImageToJson(this);
 }
 
@@ -61,20 +62,20 @@ class Room {
   final int floor;
   final RoomType type;
   final List<Bed> beds;
-  @JsonKey(name: 'has_geyser')
+  @JsonKey(name: 'has_geyser', defaultValue: false)
   final bool hasGeyser;
-  @JsonKey(name: 'has_ac')
+  @JsonKey(name: 'has_ac', defaultValue: false)
   final bool hasAc;
-  @JsonKey(name: 'has_sofa_set')
+  @JsonKey(name: 'has_sofa_set', defaultValue: false)
   final bool hasSofaSet;
   @JsonKey(name: 'sofa_set_quantity')
-  final int sofaSetQuantity;
-  @JsonKey(name: 'extra_amenities')
+  final int? sofaSetQuantity;
+  @JsonKey(name: 'extra_amenities', defaultValue: '')
   final String extraAmenities;
-  @JsonKey(name: 'is_visible')
+  @JsonKey(name: 'is_visible', defaultValue: true)
   final bool isVisible;
-  final List<RoomImage> images;
-  @JsonKey(name: 'is_occupied')
+  final List<RoomImage>? images;
+  @JsonKey(name: 'is_occupied', defaultValue: false)
   final bool isOccupied;
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
@@ -87,14 +88,14 @@ class Room {
     required this.floor,
     required this.type,
     required this.beds,
-    required this.hasGeyser,
-    required this.hasAc,
-    required this.hasSofaSet,
-    required this.sofaSetQuantity,
-    required this.extraAmenities,
-    required this.isVisible,
-    required this.images,
-    required this.isOccupied,
+    this.hasGeyser = false,
+    this.hasAc = false,
+    this.hasSofaSet = false,
+    this.sofaSetQuantity,
+    this.extraAmenities = '',
+    this.isVisible = true,
+    this.images,
+    this.isOccupied = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -143,7 +144,7 @@ class Room {
     for (final bed in beds) {
       bedCounts[bed.type] = (bedCounts[bed.type] ?? 0) + bed.quantity;
     }
-    
+
     final parts = <String>[];
     bedCounts.forEach((type, count) {
       final typeName = switch (type) {
@@ -153,7 +154,7 @@ class Room {
       };
       parts.add('$count $typeName');
     });
-    
+
     return parts.join(', ');
   }
 
@@ -161,8 +162,10 @@ class Room {
     final amenities = <String>[];
     if (hasGeyser) amenities.add('Geyser');
     if (hasAc) amenities.add('AC');
-    if (hasSofaSet) amenities.add('Sofa Set ($sofaSetQuantity)');
+    if (hasSofaSet && sofaSetQuantity != null)
+      amenities.add('Sofa Set ($sofaSetQuantity)');
+    else if (hasSofaSet) amenities.add('Sofa Set');
     if (extraAmenities.isNotEmpty) amenities.add(extraAmenities);
     return amenities;
   }
-} 
+}

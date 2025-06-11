@@ -25,6 +25,22 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
+  late final _$isLoadingRoomsAtom =
+      Atom(name: '_ProcessRoomRequestStore.isLoadingRooms', context: context);
+
+  @override
+  bool get isLoadingRooms {
+    _$isLoadingRoomsAtom.reportRead();
+    return super.isLoadingRooms;
+  }
+
+  @override
+  set isLoadingRooms(bool value) {
+    _$isLoadingRoomsAtom.reportWrite(value, super.isLoadingRooms, () {
+      super.isLoadingRooms = value;
+    });
+  }
+
   late final _$errorMessageAtom =
       Atom(name: '_ProcessRoomRequestStore.errorMessage', context: context);
 
@@ -57,6 +73,48 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
+  late final _$availableRoomsAtom =
+      Atom(name: '_ProcessRoomRequestStore.availableRooms', context: context);
+
+  @override
+  ObservableList<Room> get availableRooms {
+    _$availableRoomsAtom.reportRead();
+    return super.availableRooms;
+  }
+
+  @override
+  set availableRooms(ObservableList<Room> value) {
+    _$availableRoomsAtom.reportWrite(value, super.availableRooms, () {
+      super.availableRooms = value;
+    });
+  }
+
+  late final _$selectedRoomAtom =
+      Atom(name: '_ProcessRoomRequestStore.selectedRoom', context: context);
+
+  @override
+  Room? get selectedRoom {
+    _$selectedRoomAtom.reportRead();
+    return super.selectedRoom;
+  }
+
+  @override
+  set selectedRoom(Room? value) {
+    _$selectedRoomAtom.reportWrite(value, super.selectedRoom, () {
+      super.selectedRoom = value;
+    });
+  }
+
+  late final _$fetchAvailableRoomsAsyncAction = AsyncAction(
+      '_ProcessRoomRequestStore.fetchAvailableRooms',
+      context: context);
+
+  @override
+  Future<void> fetchAvailableRooms(String preferredType) {
+    return _$fetchAvailableRoomsAsyncAction
+        .run(() => super.fetchAvailableRooms(preferredType));
+  }
+
   late final _$processRoomRequestAsyncAction = AsyncAction(
       '_ProcessRoomRequestStore.processRoomRequest',
       context: context);
@@ -68,12 +126,29 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
         requestId: requestId, status: status, roomId: roomId));
   }
 
+  late final _$_ProcessRoomRequestStoreActionController =
+      ActionController(name: '_ProcessRoomRequestStore', context: context);
+
+  @override
+  void selectRoom(Room room) {
+    final _$actionInfo = _$_ProcessRoomRequestStoreActionController.startAction(
+        name: '_ProcessRoomRequestStore.selectRoom');
+    try {
+      return super.selectRoom(room);
+    } finally {
+      _$_ProcessRoomRequestStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 isProcessing: ${isProcessing},
+isLoadingRooms: ${isLoadingRooms},
 errorMessage: ${errorMessage},
-processedRequest: ${processedRequest}
+processedRequest: ${processedRequest},
+availableRooms: ${availableRooms},
+selectedRoom: ${selectedRoom}
     ''';
   }
 }

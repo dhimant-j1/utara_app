@@ -4,6 +4,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:utara_app/features/room_requests/process_room_request_store.dart';
 import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
+import 'package:utara_app/core/models/room_request.dart';
+import 'package:utara_app/core/models/room.dart';
 
 class ProcessRoomRequestPage extends StatelessWidget {
   final String requestId;
@@ -16,7 +18,8 @@ class ProcessRoomRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<ProcessRoomRequestStore>(
-      create: (_) => ProcessRoomRequestStore(RoomRequestRepository()),
+      create: (_) => ProcessRoomRequestStore(RoomRequestRepository())
+        ..fetchAvailableRooms('STANDARD'),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Process Room Request'),
@@ -30,7 +33,6 @@ class ProcessRoomRequestPage extends StatelessWidget {
             return Observer(
               builder: (context) {
                 final store = Provider.of<ProcessRoomRequestStore>(context);
-                // Determine if we should use narrow layout
                 final isNarrow = constraints.maxWidth < 600;
 
                 return Center(
@@ -42,8 +44,6 @@ class ProcessRoomRequestPage extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(24.0),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Card(
                             elevation: 4,
@@ -53,87 +53,90 @@ class ProcessRoomRequestPage extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(32.0),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  const Icon(
-                                    Icons.approval,
-                                    size: 80,
-                                    color: Colors.blueGrey,
-                                  ),
-                                  const SizedBox(height: 24),
-                                  SelectableText(
-                                    'Request ID: $requestId',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          color: Colors.blueGrey,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 32),
-                                  if (store.errorMessage != null)
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.red.shade50,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          const Icon(Icons.error_outline,
-                                              color: Colors.red),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              store.errorMessage!,
-                                              style: const TextStyle(
-                                                  color: Colors.red),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  if (store.isProcessing)
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 24),
-                                      child: Column(
-                                        children: [
-                                          CircularProgressIndicator(),
-                                          SizedBox(height: 16),
-                                          Text('Processing request...'),
-                                        ],
-                                      ),
-                                    ),
                                   if (!store.isProcessing &&
-                                      store.processedRequest == null)
-                                    Flex(
-                                      direction: isNarrow
-                                          ? Axis.vertical
-                                          : Axis.horizontal,
+                                      store.processedRequest == null) ...[
+                                    const Text(
+                                      'Available Rooms',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    if (store.isLoadingRooms)
+                                      const Center(
+                                          child: CircularProgressIndicator())
+                                    else if (store.availableRooms.isEmpty)
+                                      const Center(
+                                        child: Text('No available rooms found'),
+                                      )
+                                    else
+                                      SizedBox(
+                                        height: 200,
+                                        child: ListView.builder(
+                                          itemCount:
+                                              store.availableRooms.length,
+                                          itemBuilder: (context, index) {
+                                            final room =
+                                                store.availableRooms[index];
+                                            final isSelected =
+                                                store.selectedRoom?.id ==
+                                                    room.id;
+                                            return Card(
+                                              color: isSelected
+                                                  ? Colors.blue.shade50
+                                                  : null,
+                                              child: ListTile(
+                                                title: Text(
+                                                    'Room ${room.roomNumber}'),
+                                                subtitle: Text(
+                                                  'Floor: ${room.floor} • Type: ${room.type}\n'
+                                                  'Amenities: ${[
+                                                    if (room.hasAc) 'AC',
+                                                    if (room.hasGeyser)
+                                                      'Geyser',
+                                                    if (room.hasSofaSet)
+                                                      'Sofa Set',
+                                                  ].join(', ')}',
+                                                ),
+                                                selected: isSelected,
+                                                onTap: () =>
+                                                    store.selectRoom(room),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    const SizedBox(height: 24),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.check),
-                                          label: const Text('Approve Request'),
+                                          label: const Text(
+                                              'Approve with Selected Room'),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.green,
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 24,
                                               vertical: 16,
                                             ),
-                                            minimumSize: const Size(180, 50),
                                           ),
-                                          onPressed: () {
-                                            store.processRoomRequest(
-                                              requestId: requestId,
-                                              status: 'APPROVED',
-                                            );
-                                          },
+                                          onPressed: store.selectedRoom == null
+                                              ? null
+                                              : () {
+                                                  store.processRoomRequest(
+                                                    requestId: requestId,
+                                                    status: 'APPROVED',
+                                                    roomId:
+                                                        store.selectedRoom!.id,
+                                                  );
+                                                },
                                         ),
-                                        SizedBox(
-                                            width: isNarrow ? 0 : 24,
-                                            height: isNarrow ? 16 : 0),
+                                        const SizedBox(width: 16),
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.close),
                                           label: const Text('Reject Request'),
@@ -143,7 +146,6 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                               horizontal: 24,
                                               vertical: 16,
                                             ),
-                                            minimumSize: const Size(180, 50),
                                           ),
                                           onPressed: () {
                                             store.processRoomRequest(
@@ -154,51 +156,57 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                  if (store.processedRequest != null)
-                                    Column(
-                                      children: [
-                                        Icon(
-                                          store.processedRequest!.isApproved
-                                              ? Icons.check_circle
-                                              : Icons.cancel,
-                                          color:
-                                              store.processedRequest!.isApproved
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                          size: 80,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          'Request ${store.processedRequest!.isApproved ? 'approved' : 'rejected'} successfully!',
-                                          textAlign: TextAlign.center,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineSmall
-                                              ?.copyWith(
-                                                color: store.processedRequest!
-                                                        .isApproved
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                        const SizedBox(height: 32),
-                                        ElevatedButton.icon(
-                                          icon: const Icon(Icons.list),
-                                          label: const Text(
-                                              'Back to Request List'),
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 16,
-                                            ),
-                                            minimumSize: const Size(200, 50),
-                                          ),
-                                          onPressed: () =>
-                                              context.go('/room-requests'),
-                                        ),
-                                      ],
+                                  ],
+                                  if (store.errorMessage != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        store.errorMessage!,
+                                        style:
+                                            const TextStyle(color: Colors.red),
+                                      ),
                                     ),
+                                  if (store.isProcessing)
+                                    const Center(
+                                        child: CircularProgressIndicator()),
+                                  if (store.processedRequest != null) ...[
+                                    Icon(
+                                      store.processedRequest!.isApproved
+                                          ? Icons.check_circle
+                                          : Icons.cancel,
+                                      size: 64,
+                                      color: store.processedRequest!.isApproved
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      store.processedRequest!.isApproved
+                                          ? 'Request Approved'
+                                          : 'Request Rejected',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    if (store.processedRequest!.room !=
+                                        null) ...[
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'Room ${store.processedRequest!.room!.roomNumber} assigned',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                    const SizedBox(height: 24),
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          context.go('/room-requests'),
+                                      child: const Text('Back to Requests'),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),

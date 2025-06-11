@@ -21,6 +21,12 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
           : DateTime.parse(json['processed_at'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      room: json['room'] == null
+          ? null
+          : Room.fromJson(json['room'] as Map<String, dynamic>),
+      assignment: json['assignment'] == null
+          ? null
+          : RoomAssignment.fromJson(json['assignment'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
@@ -37,6 +43,8 @@ Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
       'processed_at': instance.processedAt?.toIso8601String(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
+      'room': instance.room,
+      'assignment': instance.assignment,
     };
 
 const _$RoomTypeEnumMap = {

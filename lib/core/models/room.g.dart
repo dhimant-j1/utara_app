@@ -42,16 +42,16 @@ Room _$RoomFromJson(Map<String, dynamic> json) => Room(
       beds: (json['beds'] as List<dynamic>)
           .map((e) => Bed.fromJson(e as Map<String, dynamic>))
           .toList(),
-      hasGeyser: json['has_geyser'] as bool,
-      hasAc: json['has_ac'] as bool,
-      hasSofaSet: json['has_sofa_set'] as bool,
-      sofaSetQuantity: (json['sofa_set_quantity'] as num).toInt(),
-      extraAmenities: json['extra_amenities'] as String,
-      isVisible: json['is_visible'] as bool,
-      images: (json['images'] as List<dynamic>)
-          .map((e) => RoomImage.fromJson(e as Map<String, dynamic>))
+      hasGeyser: json['has_geyser'] as bool? ?? false,
+      hasAc: json['has_ac'] as bool? ?? false,
+      hasSofaSet: json['has_sofa_set'] as bool? ?? false,
+      sofaSetQuantity: (json['sofa_set_quantity'] as num?)?.toInt(),
+      extraAmenities: json['extra_amenities'] as String? ?? '',
+      isVisible: json['is_visible'] as bool? ?? true,
+      images: (json['images'] as List<dynamic>?)
+          ?.map((e) => RoomImage.fromJson(e as Map<String, dynamic>))
           .toList(),
-      isOccupied: json['is_occupied'] as bool,
+      isOccupied: json['is_occupied'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
