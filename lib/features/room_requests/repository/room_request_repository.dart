@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:utara_app/core/di/service_locator.dart';
 import 'package:utara_app/core/stores/auth_store.dart';
+import 'package:utara_app/utils/const.dart';
 
 class RoomRequestRepository {
-  static const baseUrl = 'http://43.205.243.240:8080'; // From swagger.yaml
+  final String baseUrl = Const.baseUrl; // From swagger.yaml
 
   Future<Map<String, dynamic>> createRoomRequest({
     required DateTime checkInDate,
