@@ -154,7 +154,8 @@ class DashboardPage extends StatelessWidget {
                           subtitle: authStore.canManageFoodPasses
                               ? 'Manage food passes'
                               : 'My food passes',
-                          onTap: () => context.go('/food-passes'),
+                          onTap: () => context.go(
+                              '/food-passes/user/${authStore.currentUser?.id}'),
                         ),
                         _DashboardCard(
                           icon: Icons.add_box,

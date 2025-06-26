@@ -65,12 +65,12 @@ abstract class _AuthStoreBase with Store {
   Future<bool> login(String email, String password) async {
     isLoading = true;
     errorMessage = null;
-    
+
     try {
       final result = await _authService.login(email, password);
       token = result['token'];
       currentUser = User.fromJson(result['user']);
-      
+
       await _prefs.setString('auth_token', token!);
       return true;
     } catch (e) {
@@ -91,7 +91,7 @@ abstract class _AuthStoreBase with Store {
   }) async {
     isLoading = true;
     errorMessage = null;
-    
+
     try {
       final result = await _authService.signup(
         email: email,
@@ -102,7 +102,7 @@ abstract class _AuthStoreBase with Store {
       );
       token = result['token'];
       currentUser = User.fromJson(result['user']);
-      
+
       await _prefs.setString('auth_token', token!);
       return true;
     } catch (e) {
@@ -124,4 +124,4 @@ abstract class _AuthStoreBase with Store {
   void clearError() {
     errorMessage = null;
   }
-} 
+}

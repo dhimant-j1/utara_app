@@ -116,7 +116,10 @@ class AppRouter {
       // Food pass routes
       GoRoute(
         path: '/food-passes',
-        builder: (context, state) => const FoodPassesListPage(),
+        builder: (context, state) {
+          final authStore = GetIt.instance<AuthStore>();
+          return FoodPassesListPage(userId: authStore.currentUser?.id);
+        },
         routes: [
           GoRoute(
             path: 'generate',

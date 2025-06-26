@@ -41,6 +41,24 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
+  late final _$isGeneratingFoodPassesAtom = Atom(
+      name: '_ProcessRoomRequestStore.isGeneratingFoodPasses',
+      context: context);
+
+  @override
+  bool get isGeneratingFoodPasses {
+    _$isGeneratingFoodPassesAtom.reportRead();
+    return super.isGeneratingFoodPasses;
+  }
+
+  @override
+  set isGeneratingFoodPasses(bool value) {
+    _$isGeneratingFoodPassesAtom
+        .reportWrite(value, super.isGeneratingFoodPasses, () {
+      super.isGeneratingFoodPasses = value;
+    });
+  }
+
   late final _$errorMessageAtom =
       Atom(name: '_ProcessRoomRequestStore.errorMessage', context: context);
 
@@ -54,6 +72,22 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
   set errorMessage(String? value) {
     _$errorMessageAtom.reportWrite(value, super.errorMessage, () {
       super.errorMessage = value;
+    });
+  }
+
+  late final _$foodPassMessageAtom =
+      Atom(name: '_ProcessRoomRequestStore.foodPassMessage', context: context);
+
+  @override
+  String? get foodPassMessage {
+    _$foodPassMessageAtom.reportRead();
+    return super.foodPassMessage;
+  }
+
+  @override
+  set foodPassMessage(String? value) {
+    _$foodPassMessageAtom.reportWrite(value, super.foodPassMessage, () {
+      super.foodPassMessage = value;
     });
   }
 
@@ -145,7 +179,9 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     return '''
 isProcessing: ${isProcessing},
 isLoadingRooms: ${isLoadingRooms},
+isGeneratingFoodPasses: ${isGeneratingFoodPasses},
 errorMessage: ${errorMessage},
+foodPassMessage: ${foodPassMessage},
 processedRequest: ${processedRequest},
 availableRooms: ${availableRooms},
 selectedRoom: ${selectedRoom}

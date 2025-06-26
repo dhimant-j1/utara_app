@@ -201,6 +201,42 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                       ),
                                     ],
                                     const SizedBox(height: 24),
+                                    if (store.isGeneratingFoodPasses)
+                                      const Column(
+                                        children: [
+                                          Text(
+                                            'Generating Food Passes...',
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                          SizedBox(height: 8),
+                                          CircularProgressIndicator(),
+                                        ],
+                                      ),
+                                    if (store.foodPassMessage != null) ...[
+                                      const SizedBox(height: 16),
+                                      Card(
+                                        color: Colors.green.shade50,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.restaurant_menu,
+                                                  color: Colors.green),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                store.foodPassMessage!,
+                                                style: const TextStyle(
+                                                    color: Colors.green),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    const SizedBox(height: 24),
                                     ElevatedButton(
                                       onPressed: () =>
                                           context.go('/room-requests'),
