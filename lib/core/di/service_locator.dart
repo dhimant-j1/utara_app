@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:utara_app/features/food_passes/stores/food_pass_store.dart';
 import 'package:utara_app/features/rooms/repository/room_repository.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
@@ -23,6 +24,8 @@ Future<void> setupServiceLocator() async {
   getIt.registerSingleton<AuthStore>(authStore);
   getIt.registerLazySingleton<UserStore>(
       () => UserStore(getIt<UserRepository>()));
+  getIt.registerLazySingleton<FoodPassStore>(
+      () => FoodPassStore(getIt<ApiService>().dio));
 
   // Set up auth token interceptor
   // Note: This is a simplified version without MobX reaction

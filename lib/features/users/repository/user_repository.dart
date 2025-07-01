@@ -58,4 +58,37 @@ class UserRepository {
       throw 'Failed to create user: ${e.toString()}';
     }
   }
+
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    try {
+      AuthStore authStore = getIt<AuthStore>();
+      final response = await _apiService.dio.get(
+        '/users',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${authStore.token}',
+          },
+        ),
+      );
+      final data = response.data as Map<String, dynamic>;
+      return List<Map<String, dynamic>>.from(data['users'] ?? []);
+    } catch (e) {
+      if (e is DioException) {
+        final statusCode = e.response?.statusCode;
+        final data = e.response?.data;
+
+        switch (statusCode) {
+          case 401:
+            throw 'Unauthorized access';
+          case 403:
+            throw 'You do not have permission to view users';
+          case 500:
+            throw 'Server error. Please try again later';
+          default:
+            throw data?['error'] ?? 'Failed to fetch users';
+        }
+      }
+      throw 'Failed to fetch users: ${e.toString()}';
+    }
+  }
 }

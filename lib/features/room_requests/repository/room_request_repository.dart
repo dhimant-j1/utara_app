@@ -66,7 +66,7 @@ class RoomRequestRepository {
   Future<List<RoomRequest>> fetchRoomRequests(
       {String? status, String? userId}) async {
     AuthStore authStore = getIt<AuthStore>();
-    final uri = Uri.parse('$baseUrl/room-requests').replace(queryParameters: {
+    final uri = Uri.parse('$baseUrl/room-requests/').replace(queryParameters: {
       if (status != null) 'status': status,
       if (userId != null) 'user_id': userId,
     });
@@ -78,10 +78,11 @@ class RoomRequestRepository {
       },
     );
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
+      final List<dynamic>? data = jsonDecode(response.body);
       return data
-          .map((e) => RoomRequest.fromJson(e as Map<String, dynamic>))
-          .toList();
+              ?.map((e) => RoomRequest.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [];
     } else {
       throw Exception('Failed to fetch room requests: ${response.body}');
     }

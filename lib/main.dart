@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'core/di/service_locator.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'package:utara_app/features/food_passes/stores/food_pass_store.dart';
 import 'core/stores/auth_store.dart';
 
 void main() async {
@@ -24,6 +25,9 @@ class UtaraApp extends StatelessWidget {
       providers: [
         Provider<AuthStore>(
           create: (_) => GetIt.instance<AuthStore>(),
+        ),
+        Provider<FoodPassStore>(
+          create: (_) => GetIt.instance<FoodPassStore>(),
         ),
       ],
       child: Consumer<AuthStore>(

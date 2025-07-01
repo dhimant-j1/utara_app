@@ -51,7 +51,7 @@ class FoodPassRepository {
       queryParams['is_used'] = isUsed.toString();
     }
 
-    final uri = Uri.parse('$baseUrl/food-passes/user/${userId}').replace(
+    final uri = Uri.parse('$baseUrl/food-passes/user/$userId').replace(
       queryParameters: queryParams,
     );
 
@@ -63,7 +63,7 @@ class FoodPassRepository {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
+      final List<dynamic> data = jsonDecode(response.body) ?? [];
       return data.map((json) => FoodPass.fromJson(json)).toList();
     } else {
       throw Exception('Failed to fetch food passes: ${response.body}');
