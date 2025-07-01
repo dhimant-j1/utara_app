@@ -1,0 +1,2 @@
+C:/Users/bhara/Code/utara_app/android/app/.cxx/RelWithDebInfo/1t2w4u14/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/bhara/Code/utara_app/android/app/.cxx/RelWithDebInfo/1t2w4u14/armeabi-v7a/CMakeFiles/rebuild_cache.dir

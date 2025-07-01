@@ -137,7 +137,19 @@ class RoomRequestsListPage extends StatelessWidget {
             ),
             isThreeLine: true,
             onTap: () {
-              // TODO: Navigate to details or process page
+              // Only allow processing if the request is still pending
+              if (req.isPending) {
+                context.push('/room-requests/${req.id}/process', extra: req);
+              } else {
+                // Show a snackbar informing the user that the request is already processed
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'This request has already been ${req.status.name.toLowerCase()}'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
             },
           ),
         );
