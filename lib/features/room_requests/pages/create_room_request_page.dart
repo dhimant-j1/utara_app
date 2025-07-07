@@ -68,7 +68,7 @@ class _CreateRoomRequestPageState extends State<CreateRoomRequestPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Room request created successfully!')),
       );
-      context.go('/room-requests');
+      context.push('/room-requests');
     } catch (e) {
       if (!mounted) return;
 
@@ -91,7 +91,7 @@ class _CreateRoomRequestPageState extends State<CreateRoomRequestPage> {
         title: const Text('Create Room Request'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/room-requests'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Form(

@@ -153,7 +153,7 @@ class _RoomListPageState extends State<RoomListPage> {
                       child: _buildResponsiveList(context),
                     ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/rooms/create'),
+        onPressed: () => context.push('/rooms/create'),
         child: const Icon(Icons.add),
       ),
     );

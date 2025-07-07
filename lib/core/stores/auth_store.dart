@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:utara_app/utils/const.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
@@ -50,15 +53,35 @@ abstract class _AuthStoreBase with Store {
 
   @action
   Future<void> _loadStoredAuth() async {
-    final storedToken = _prefs.getString('auth_token');
+    final storedToken = _prefs.getString(Const.token);
+    print('Stored token: $storedToken'); // Debug log
     if (storedToken != null) {
       token = storedToken;
+      _authService.setAuthToken(storedToken);
+      // Load stored user data
+      currentUser = _loadUserFromStorage();
+    } else {
+      print('No stored token found'); // Debug log
+    }
+  }
+
+  @action
+  Future<void> _saveUserToStorage(User user) async {
+    await _prefs.setString(Const.userData, jsonEncode(user.toJson()));
+  }
+
+  @action
+  User? _loadUserFromStorage() {
+    final userJson = _prefs.getString(Const.userData);
+    if (userJson != null) {
       try {
-        currentUser = await _authService.getProfile();
+        return User.fromJson(jsonDecode(userJson));
       } catch (e) {
-        await logout();
+        print('Error loading user data: $e');
+        return null;
       }
     }
+    return null;
   }
 
   @action
@@ -69,9 +92,12 @@ abstract class _AuthStoreBase with Store {
     try {
       final result = await _authService.login(email, password);
       token = result['token'];
+      _authService.setAuthToken(token);
       currentUser = User.fromJson(result['user']);
 
-      await _prefs.setString('auth_token', token!);
+      // Save both token and user data
+      await _prefs.setString(Const.token, token!);
+      await _saveUserToStorage(currentUser!);
       return true;
     } catch (e) {
       errorMessage = e.toString();
@@ -103,7 +129,9 @@ abstract class _AuthStoreBase with Store {
       token = result['token'];
       currentUser = User.fromJson(result['user']);
 
-      await _prefs.setString('auth_token', token!);
+      // Save both token and user data
+      await _prefs.setString(Const.token, token!);
+      await _saveUserToStorage(currentUser!);
       return true;
     } catch (e) {
       errorMessage = e.toString();
@@ -115,9 +143,12 @@ abstract class _AuthStoreBase with Store {
 
   @action
   Future<void> logout() async {
+    _authService.setAuthToken(null);
     currentUser = null;
     token = null;
-    await _prefs.remove('auth_token');
+    // Clear both token and user data
+    await _prefs.remove(Const.token);
+    await _prefs.remove(Const.userData);
   }
 
   @action

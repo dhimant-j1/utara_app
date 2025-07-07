@@ -25,7 +25,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
           title: const Text('Process Room Request'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/room-requests'),
+            onPressed: () => context.pop(),
           ),
         ),
         body: LayoutBuilder(
@@ -238,8 +238,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                     ],
                                     const SizedBox(height: 24),
                                     ElevatedButton(
-                                      onPressed: () =>
-                                          context.go('/room-requests'),
+                                      onPressed: () => context.pop(),
                                       child: const Text('Back to Requests'),
                                     ),
                                   ],

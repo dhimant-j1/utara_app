@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:utara_app/core/di/service_locator.dart';
+import 'package:utara_app/core/stores/auth_store.dart';
 import '../models/user.dart';
 import 'api_service.dart';
 
@@ -6,6 +8,10 @@ class AuthService {
   final ApiService _apiService;
 
   AuthService(this._apiService);
+
+  void setAuthToken(String? token) {
+    _apiService.setAuthToken(token);
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -33,7 +39,7 @@ class AuthService {
         'name': name,
         'phone_number': phoneNumber,
       };
-      
+
       if (role != null) {
         data['role'] = role;
       }
@@ -46,8 +52,16 @@ class AuthService {
   }
 
   Future<User> getProfile() async {
+    AuthStore authStore = getIt<AuthStore>();
     try {
-      final response = await _apiService.dio.get('/profile');
+      final response = await _apiService.dio.get(
+        '/profile',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${authStore.token}',
+          },
+        ),
+      );
       return User.fromJson(response.data);
     } catch (e) {
       throw _handleAuthError(e);
@@ -58,7 +72,7 @@ class AuthService {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;
       final data = error.response?.data;
-      
+
       switch (statusCode) {
         case 400:
           return data['error'] ?? 'Invalid request';
@@ -76,4 +90,4 @@ class AuthService {
     }
     return error.toString();
   }
-} 
+}

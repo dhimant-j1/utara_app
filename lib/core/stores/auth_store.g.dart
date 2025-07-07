@@ -121,6 +121,15 @@ mixin _$AuthStore on _AuthStoreBase, Store {
     return _$_loadStoredAuthAsyncAction.run(() => super._loadStoredAuth());
   }
 
+  late final _$_saveUserToStorageAsyncAction =
+      AsyncAction('_AuthStoreBase._saveUserToStorage', context: context);
+
+  @override
+  Future<void> _saveUserToStorage(User user) {
+    return _$_saveUserToStorageAsyncAction
+        .run(() => super._saveUserToStorage(user));
+  }
+
   late final _$loginAsyncAction =
       AsyncAction('_AuthStoreBase.login', context: context);
 
@@ -157,6 +166,17 @@ mixin _$AuthStore on _AuthStoreBase, Store {
 
   late final _$_AuthStoreBaseActionController =
       ActionController(name: '_AuthStoreBase', context: context);
+
+  @override
+  User? _loadUserFromStorage() {
+    final _$actionInfo = _$_AuthStoreBaseActionController.startAction(
+        name: '_AuthStoreBase._loadUserFromStorage');
+    try {
+      return super._loadUserFromStorage();
+    } finally {
+      _$_AuthStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void clearError() {

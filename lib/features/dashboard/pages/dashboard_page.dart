@@ -18,18 +18,18 @@ class DashboardPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
-            onPressed: () => context.go('/profile'),
+            onPressed: () => context.push('/profile'),
           ),
           PopupMenuButton<String>(
             onSelected: (value) async {
               switch (value) {
                 case 'profile':
-                  context.go('/profile');
+                  context.push('/profile');
                   break;
                 case 'logout':
                   await authStore.logout();
                   if (context.mounted) {
-                    context.go('/auth/login');
+                    context.push('/auth/login');
                   }
                   break;
               }
@@ -138,7 +138,7 @@ class DashboardPage extends StatelessWidget {
                           icon: Icons.hotel,
                           title: 'Rooms',
                           subtitle: 'Browse available rooms',
-                          onTap: () => context.go('/rooms'),
+                          onTap: () => context.push('/rooms'),
                         ),
                         _DashboardCard(
                           icon: Icons.book_online,
@@ -146,7 +146,7 @@ class DashboardPage extends StatelessWidget {
                           subtitle: authStore.canProcessRequests
                               ? 'Manage room requests'
                               : 'My room requests',
-                          onTap: () => context.go('/room-requests'),
+                          onTap: () => context.push('/room-requests'),
                         ),
                         _DashboardCard(
                           icon: Icons.restaurant,
@@ -154,14 +154,14 @@ class DashboardPage extends StatelessWidget {
                           subtitle: authStore.canManageFoodPasses
                               ? 'Manage food passes'
                               : 'My food passes',
-                          onTap: () => context.go(
+                          onTap: () => context.push(
                               '/food-passes/user/${authStore.currentUser?.id}'),
                         ),
                         _DashboardCard(
                           icon: Icons.add_box,
                           title: 'Request Room',
                           subtitle: 'Create new room request',
-                          onTap: () => context.go('/room-requests/create'),
+                          onTap: () => context.push('/room-requests/create'),
                         ),
                       ],
                     ),
@@ -183,25 +183,25 @@ class DashboardPage extends StatelessWidget {
                             icon: Icons.add_home,
                             title: 'Create Room',
                             subtitle: 'Add new room',
-                            onTap: () => context.go('/rooms/create'),
+                            onTap: () => context.push('/rooms/create'),
                           ),
                           _DashboardCard(
                             icon: Icons.analytics,
                             title: 'Room Stats',
                             subtitle: 'View room statistics',
-                            onTap: () => context.go('/rooms/stats'),
+                            onTap: () => context.push('/rooms/stats'),
                           ),
                           _DashboardCard(
                             icon: Icons.qr_code,
                             title: 'Generate Passes',
                             subtitle: 'Create food passes',
-                            onTap: () => context.go('/food-passes/generate'),
+                            onTap: () => context.push('/food-passes/generate'),
                           ),
                           _DashboardCard(
                             icon: Icons.qr_code_scanner,
                             title: 'Scan Pass',
                             subtitle: 'Scan food passes',
-                            onTap: () => context.go('/food-passes/scan'),
+                            onTap: () => context.push('/food-passes/scan'),
                           ),
                         ],
                       ),
@@ -224,7 +224,7 @@ class DashboardPage extends StatelessWidget {
                             icon: Icons.person_add,
                             title: 'Create User',
                             subtitle: 'Add new user account',
-                            onTap: () => context.go('/users/create'),
+                            onTap: () => context.push('/users/create'),
                           ),
                         ],
                       ),

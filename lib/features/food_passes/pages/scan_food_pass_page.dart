@@ -28,7 +28,7 @@ class _ScanFoodPassPageState extends State<ScanFoodPassPage> {
         title: const Text('Scan Food Pass'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/food-passes'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Stack(

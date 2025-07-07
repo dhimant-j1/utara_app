@@ -38,20 +38,20 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     'Utara App',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Welcome back! Please sign in to your account.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                          color: Colors.grey[600],
+                        ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
-                  
+
                   // Login Form
                   FormBuilder(
                     key: _formKey,
@@ -82,25 +82,27 @@ class _LoginPageState extends State<LoginPage> {
                           ]),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Login Button
                         SizedBox(
                           width: double.infinity,
                           height: 48,
                           child: Observer(
                             builder: (_) => ElevatedButton(
-                              onPressed: _authStore.isLoading ? null : _handleLogin,
+                              onPressed:
+                                  _authStore.isLoading ? null : _handleLogin,
                               child: _authStore.isLoading
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     )
                                   : const Text('Sign In'),
                             ),
                           ),
                         ),
-                        
+
                         // Error Message
                         Observer(
                           builder: (_) => _authStore.errorMessage != null
@@ -114,12 +116,14 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(Icons.error_outline, color: Colors.red[700]),
+                                      Icon(Icons.error_outline,
+                                          color: Colors.red[700]),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           _authStore.errorMessage!,
-                                          style: TextStyle(color: Colors.red[700]),
+                                          style:
+                                              TextStyle(color: Colors.red[700]),
                                         ),
                                       ),
                                     ],
@@ -127,9 +131,9 @@ class _LoginPageState extends State<LoginPage> {
                                 )
                               : const SizedBox.shrink(),
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Sign Up Link
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -163,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
         values['email'] as String,
         values['password'] as String,
       );
-      
+
       if (success && mounted) {
         context.go('/dashboard');
       }
@@ -175,4 +179,4 @@ class _LoginPageState extends State<LoginPage> {
     _authStore.clearError();
     super.dispose();
   }
-} 
+}

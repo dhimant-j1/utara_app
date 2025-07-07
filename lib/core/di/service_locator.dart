@@ -18,10 +18,14 @@ Future<void> setupServiceLocator() async {
   // Repositories
   getIt.registerLazySingleton(() => RoomRepository(getIt<ApiService>()));
   getIt.registerLazySingleton(() => UserRepository(getIt<ApiService>()));
-  // Stores
-  final authStore = AuthStore(getIt<AuthService>());
-  await authStore.init();
-  getIt.registerSingleton<AuthStore>(authStore);
+
+  // Register AuthStore first without initialization
+  getIt.registerSingleton<AuthStore>(AuthStore(getIt<AuthService>()));
+
+  // Initialize AuthStore after registration
+  await getIt<AuthStore>().init();
+
+  // Other stores
   getIt.registerLazySingleton<UserStore>(
       () => UserStore(getIt<UserRepository>()));
   getIt.registerLazySingleton<FoodPassStore>(
@@ -30,7 +34,7 @@ Future<void> setupServiceLocator() async {
   // Set up auth token interceptor
   // Note: This is a simplified version without MobX reaction
   // In a real app, you would set up proper reactive token management
-  if (authStore.token != null) {
-    getIt<ApiService>().setAuthToken(authStore.token);
+  if (getIt<AuthStore>().token != null) {
+    getIt<ApiService>().setAuthToken(getIt<AuthStore>().token);
   }
 }

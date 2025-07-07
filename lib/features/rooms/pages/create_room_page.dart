@@ -61,7 +61,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Room created successfully!')),
       );
-      context.go('/rooms');
+      context.pop();
     } catch (e) {
       if (!mounted) return;
 
@@ -500,7 +500,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           title: const Text('Create Room'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/rooms'),
+            onPressed: () => context.pop(),
           ),
           elevation: 0,
         ),

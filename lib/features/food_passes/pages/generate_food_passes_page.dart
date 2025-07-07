@@ -129,7 +129,7 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
         title: const Text('Generate Food Passes'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/food-passes'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Center(

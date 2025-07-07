@@ -16,7 +16,7 @@ class RoomDetailsPage extends StatelessWidget {
         title: const Text('Room Details'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/rooms'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Center(
