@@ -18,7 +18,7 @@ abstract class _FoodPassesStore with Store {
   String? errorMessage;
 
   @observable
-  ObservableList<FoodPass> foodPasses = ObservableList<FoodPass>();
+  ObservableList<FoodPass> allFoodPasses = ObservableList<FoodPass>();
 
   @observable
   DateTime? selectedDate;
@@ -26,16 +26,35 @@ abstract class _FoodPassesStore with Store {
   @observable
   bool? showUsedOnly;
 
+  @computed
+  ObservableList<FoodPass> get foodPasses {
+    return ObservableList.of(allFoodPasses.where((pass) {
+      // Filter by date if selected
+      if (selectedDate != null) {
+        final passDate =
+            DateTime(pass.date.year, pass.date.month, pass.date.day);
+        final filterDate = DateTime(
+            selectedDate!.year, selectedDate!.month, selectedDate!.day);
+        if (passDate != filterDate) return false;
+      }
+
+      // Filter by used status if selected
+      if (showUsedOnly != null) {
+        if (pass.isUsed != showUsedOnly) return false;
+      }
+
+      return true;
+    }).toList());
+  }
+
   @action
   void setSelectedDate(DateTime? date) {
     selectedDate = date;
-    fetchFoodPasses();
   }
 
   @action
   void setShowUsedOnly(bool? value) {
     showUsedOnly = value;
-    fetchFoodPasses();
   }
 
   @action
@@ -44,12 +63,8 @@ abstract class _FoodPassesStore with Store {
     errorMessage = null;
 
     try {
-      final passes = await repository.getUserFoodPasses(
-        userId: userId,
-        date: selectedDate,
-        isUsed: showUsedOnly,
-      );
-      foodPasses = ObservableList.of(passes);
+      final passes = await repository.getUserFoodPasses(userId: userId);
+      allFoodPasses = ObservableList.of(passes);
     } catch (e) {
       errorMessage = 'Failed to load food passes: $e';
     } finally {

@@ -9,6 +9,14 @@ part of 'food_passes_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$FoodPassesStore on _FoodPassesStore, Store {
+  Computed<ObservableList<FoodPass>>? _$foodPassesComputed;
+
+  @override
+  ObservableList<FoodPass> get foodPasses => (_$foodPassesComputed ??=
+          Computed<ObservableList<FoodPass>>(() => super.foodPasses,
+              name: '_FoodPassesStore.foodPasses'))
+      .value;
+
   late final _$isLoadingAtom =
       Atom(name: '_FoodPassesStore.isLoading', context: context);
 
@@ -41,19 +49,19 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     });
   }
 
-  late final _$foodPassesAtom =
-      Atom(name: '_FoodPassesStore.foodPasses', context: context);
+  late final _$allFoodPassesAtom =
+      Atom(name: '_FoodPassesStore.allFoodPasses', context: context);
 
   @override
-  ObservableList<FoodPass> get foodPasses {
-    _$foodPassesAtom.reportRead();
-    return super.foodPasses;
+  ObservableList<FoodPass> get allFoodPasses {
+    _$allFoodPassesAtom.reportRead();
+    return super.allFoodPasses;
   }
 
   @override
-  set foodPasses(ObservableList<FoodPass> value) {
-    _$foodPassesAtom.reportWrite(value, super.foodPasses, () {
-      super.foodPasses = value;
+  set allFoodPasses(ObservableList<FoodPass> value) {
+    _$allFoodPassesAtom.reportWrite(value, super.allFoodPasses, () {
+      super.allFoodPasses = value;
     });
   }
 
@@ -128,9 +136,10 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     return '''
 isLoading: ${isLoading},
 errorMessage: ${errorMessage},
-foodPasses: ${foodPasses},
+allFoodPasses: ${allFoodPasses},
 selectedDate: ${selectedDate},
-showUsedOnly: ${showUsedOnly}
+showUsedOnly: ${showUsedOnly},
+foodPasses: ${foodPasses}
     ''';
   }
 }

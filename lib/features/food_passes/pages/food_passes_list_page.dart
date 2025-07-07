@@ -5,10 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:utara_app/core/models/food_pass.dart';
 import 'package:utara_app/features/food_passes/food_passes_store.dart';
 import 'package:utara_app/features/food_passes/repository/food_pass_repository.dart';
+import 'package:utara_app/core/stores/auth_store.dart';
+import 'package:utara_app/features/users/repository/user_repository.dart';
+import 'package:utara_app/core/di/service_locator.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
-class FoodPassesListPage extends StatelessWidget {
+class FoodPassesListPage extends StatefulWidget {
   final String? userId;
 
   const FoodPassesListPage({
@@ -17,18 +20,104 @@ class FoodPassesListPage extends StatelessWidget {
   });
 
   @override
+  State<FoodPassesListPage> createState() => _FoodPassesListPageState();
+}
+
+class _FoodPassesListPageState extends State<FoodPassesListPage> {
+  List<Map<String, dynamic>>? users;
+  String? selectedUserId;
+  bool isLoadingUsers = false;
+  late final FoodPassesStore foodPassesStore;
+
+  @override
+  void initState() {
+    super.initState();
+    final authStore = getIt<AuthStore>();
+    if (authStore.isAdmin || authStore.isStaff) {
+      _loadUsers();
+    }
+    selectedUserId = widget.userId;
+    foodPassesStore = FoodPassesStore(FoodPassRepository())
+      ..fetchFoodPasses(selectedUserId);
+  }
+
+  Future<void> _loadUsers() async {
+    setState(() {
+      isLoadingUsers = true;
+    });
+    try {
+      final userRepository = UserRepository(getIt());
+      users = await userRepository.getUsers();
+    } catch (e) {
+      // Handle error
+      print('Error loading users: $e');
+    } finally {
+      setState(() {
+        isLoadingUsers = false;
+      });
+    }
+  }
+
+  IconData _getMealTypeIcon(MealType type) {
+    switch (type) {
+      case MealType.breakfast:
+        return Icons.free_breakfast;
+      case MealType.lunch:
+        return Icons.lunch_dining;
+      case MealType.dinner:
+        return Icons.dinner_dining;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Provider<FoodPassesStore>(
-      create: (_) =>
-          FoodPassesStore(FoodPassRepository())..fetchFoodPasses(userId),
+    final authStore = getIt<AuthStore>();
+
+    return Provider<FoodPassesStore>.value(
+      value: foodPassesStore,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(userId != null ? 'User Food Passes' : 'My Food Passes'),
+          title: Text(
+              selectedUserId != null ? 'User Food Passes' : 'My Food Passes'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.go('/dashboard'),
           ),
           actions: [
+            if (authStore.isAdmin || authStore.isStaff) ...[
+              if (isLoadingUsers)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: DropdownButton<String>(
+                    value: selectedUserId,
+                    hint: const Text('Select User'),
+                    items: [
+                      if (users != null)
+                        ...users!.map((user) => DropdownMenuItem<String>(
+                              value: user['id'] as String,
+                              child: Text(user['name'] as String),
+                            )),
+                    ],
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectedUserId = value;
+                      });
+                      foodPassesStore.fetchFoodPasses(value);
+                    },
+                  ),
+                ),
+            ],
             Observer(
               builder: (context) {
                 final store = Provider.of<FoodPassesStore>(context);
@@ -96,7 +185,7 @@ class FoodPassesListPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => store.fetchFoodPasses(userId),
+                      onPressed: () => store.fetchFoodPasses(selectedUserId),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -227,16 +316,5 @@ class FoodPassesListPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  IconData _getMealTypeIcon(MealType type) {
-    switch (type) {
-      case MealType.breakfast:
-        return Icons.free_breakfast;
-      case MealType.lunch:
-        return Icons.lunch_dining;
-      case MealType.dinner:
-        return Icons.dinner_dining;
-    }
   }
 }
