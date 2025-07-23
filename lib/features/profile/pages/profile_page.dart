@@ -117,6 +117,14 @@ class ProfilePage extends StatelessWidget {
                                 ),
                                 const Divider(),
                                 _ProfileInfoItem(
+                                  icon: Icons.badge,
+                                  label: 'User Name',
+                                  value: user.username.isNotEmpty
+                                      ? user.username
+                                      : 'N/A',
+                                ),
+                                const Divider(),
+                                _ProfileInfoItem(
                                   icon: Icons.email,
                                   label: 'Email',
                                   value: user.email,

@@ -8,6 +8,7 @@ part of 'room_request.dart';
 
 RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
       id: json['id'] as String,
+      name: json['name'] as String,
       userId: json['user_id'] as String,
       checkInDate: DateTime.parse(json['check_in_date'] as String),
       checkOutDate: DateTime.parse(json['check_out_date'] as String),
@@ -32,6 +33,7 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
 Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'name': instance.name,
       'user_id': instance.userId,
       'check_in_date': instance.checkInDate.toIso8601String(),
       'check_out_date': instance.checkOutDate.toIso8601String(),

@@ -116,8 +116,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                       children: [
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.check),
-                                          label: const Text(
-                                              'Approve with Selected Room'),
+                                          label: const Text('Approve'),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.green,
                                             padding: const EdgeInsets.symmetric(
@@ -139,7 +138,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                         const SizedBox(width: 16),
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.close),
-                                          label: const Text('Reject Request'),
+                                          label: const Text('Reject'),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.red,
                                             padding: const EdgeInsets.symmetric(

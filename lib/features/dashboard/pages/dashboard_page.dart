@@ -186,6 +186,12 @@ class DashboardPage extends StatelessWidget {
                             onTap: () => context.push('/rooms/create'),
                           ),
                           _DashboardCard(
+                            icon: Icons.upload_file,
+                            title: 'Bulk Upload Rooms',
+                            subtitle: 'Upload rooms via CSV',
+                            onTap: () => context.push('/rooms/bulk-upload'),
+                          ),
+                          _DashboardCard(
                             icon: Icons.analytics,
                             title: 'Room Stats',
                             subtitle: 'View room statistics',

@@ -59,6 +59,8 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         FormBuilderTextField(
                           name: 'email',
+                          controller:
+                              TextEditingController(text: 'admin@utara.com'),
                           decoration: const InputDecoration(
                             labelText: 'Email',
                             prefixIcon: Icon(Icons.email),
@@ -71,6 +73,8 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 16),
                         FormBuilderTextField(
                           name: 'password',
+                          controller:
+                              TextEditingController(text: 'utara_admin'),
                           decoration: const InputDecoration(
                             labelText: 'Password',
                             prefixIcon: Icon(Icons.lock),

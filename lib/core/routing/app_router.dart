@@ -17,6 +17,7 @@ import '../../features/food_passes/pages/generate_food_passes_page.dart';
 import '../../features/food_passes/pages/scan_food_pass_page.dart';
 import '../../features/dashboard/pages/dashboard_page.dart';
 import '../../features/users/pages/create_user_page.dart';
+import '../../features/rooms/pages/bulk_upload_rooms_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -65,6 +66,10 @@ class AppRouter {
           GoRoute(
             path: 'create',
             builder: (context, state) => const CreateRoomPage(),
+          ),
+          GoRoute(
+            path: 'bulk-upload',
+            builder: (context, state) => const BulkUploadRoomsPage(),
           ),
           GoRoute(
             path: 'stats',

@@ -117,7 +117,7 @@ class RoomRequestsListPage extends StatelessWidget {
               ),
             ),
             title: Text(
-              'Request by: ${req.userId}',
+              'Request by: ${req.name}',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -217,7 +217,7 @@ class RoomRequestsListPage extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Request by: ${req.userId}',
+                          'Request by: ${req.name}',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,

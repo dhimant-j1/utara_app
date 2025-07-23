@@ -18,6 +18,8 @@ class RoomRequest {
   final String id;
   @JsonKey(name: 'user_id')
   final String userId;
+  @JsonKey(name: 'name')
+  final String name;
   @JsonKey(name: 'check_in_date')
   final DateTime checkInDate;
   @JsonKey(name: 'check_out_date')
@@ -42,6 +44,7 @@ class RoomRequest {
 
   const RoomRequest({
     required this.id,
+    required this.name,
     required this.userId,
     required this.checkInDate,
     required this.checkOutDate,
@@ -64,6 +67,7 @@ class RoomRequest {
   RoomRequest copyWith({
     String? id,
     String? userId,
+    String? name,
     DateTime? checkInDate,
     DateTime? checkOutDate,
     int? numberOfPeople,
@@ -80,6 +84,7 @@ class RoomRequest {
     return RoomRequest(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      name: name ?? this.name,
       checkInDate: checkInDate ?? this.checkInDate,
       checkOutDate: checkOutDate ?? this.checkOutDate,
       numberOfPeople: numberOfPeople ?? this.numberOfPeople,

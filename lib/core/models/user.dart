@@ -14,6 +14,8 @@ enum UserRole {
 @JsonSerializable()
 class User {
   final String id;
+  @JsonKey(name: 'user_name')
+  final String username;
   final String email;
   final String name;
   final UserRole role;
@@ -28,6 +30,7 @@ class User {
 
   const User({
     required this.id,
+    this.username = '',
     required this.email,
     required this.name,
     required this.role,
@@ -42,6 +45,7 @@ class User {
 
   User copyWith({
     String? id,
+    String? username,
     String? email,
     String? name,
     UserRole? role,
@@ -52,6 +56,7 @@ class User {
   }) {
     return User(
       id: id ?? this.id,
+      username: username ?? this.username,
       email: email ?? this.email,
       name: name ?? this.name,
       role: role ?? this.role,
@@ -68,4 +73,4 @@ class User {
   bool get canManageRooms => isAdmin || isStaff;
   bool get canManageFoodPasses => isAdmin || isStaff;
   bool get canProcessRequests => isAdmin || isStaff;
-} 
+}

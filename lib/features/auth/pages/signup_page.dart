@@ -19,7 +19,7 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _authStore = GetIt.instance<AuthStore>();
-  String role = 'USER';
+  String role = 'STAFF';
 
   @override
   Widget build(BuildContext context) {
@@ -134,89 +134,44 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Role selection (only for SUPER_ADMIN)
-                      /*    Observer(
-                        builder: (_) => _authStore.isAdmin
-                            ? FormBuilderDropdown<UserRole>(
-                                name: 'role',
-                                decoration: const InputDecoration(
-                                  labelText: 'Role',
-                                  prefixIcon: Icon(Icons.admin_panel_settings),
-                                ),
-                                items: UserRole.values
-                                    .map((role) => DropdownMenuItem(
-                                          value: role,
-                                          child:
-                                              Text(_getRoleDisplayName(role)),
-                                        ))
-                                    .toList(),
-                                validator: FormBuilderValidators.required(),
-                                onChanged: (value) {
-                                  developer.log(value.toString());
-                                  setState(() {
-                                    if (value == UserRole.superAdmin) {
-                                      role = 'SUPER_ADMIN';
-                                    } else if (value == UserRole.staff) {
-                                      role = 'STAFF';
-                                    } else {
-                                      role = 'USER';
-                                    }
-                                  });
-                                },
-                              )
-                            : FormBuilderDropdown<UserRole>(
-                                name: 'role',
-                                decoration: const InputDecoration(
-                                  labelText: 'Role',
-                                  prefixIcon: Icon(Icons.admin_panel_settings),
-                                ),
-                                items: UserRole.values
-                                    .map((role) => DropdownMenuItem(
-                                          value: role,
-                                          child:
-                                              Text(_getRoleDisplayName(role)),
-                                        ))
-                                    .toList(),
-                                validator: FormBuilderValidators.required(),
-                                onChanged: (value) {
-                                  developer.log(value.toString());
-                                  setState(() {
-                                    if (value == UserRole.superAdmin) {
-                                      role = 'SUPER_ADMIN';
-                                    } else if (value == UserRole.staff) {
-                                      role = 'STAFF';
-                                    } else {
-                                      role = 'USER';
-                                    }
-                                  });
-                                },
+                      FutureBuilder<bool>(
+                        future: Future.value(Theme.of(context).platform ==
+                                TargetPlatform.android ||
+                            Theme.of(context).platform == TargetPlatform.iOS),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data == true) {
+                            // Mobile device - role is fixed to STAFF
+                            role = 'STAFF';
+                            return const SizedBox.shrink();
+                          } else {
+                            // Desktop/Web - show role dropdown
+                            return FormBuilderDropdown<UserRole>(
+                              name: 'role',
+                              decoration: const InputDecoration(
+                                labelText: 'Role',
+                                prefixIcon: Icon(Icons.admin_panel_settings),
                               ),
-                      ), */
-
-                      FormBuilderDropdown<UserRole>(
-                        name: 'role',
-                        decoration: const InputDecoration(
-                          labelText: 'Role',
-                          prefixIcon: Icon(Icons.admin_panel_settings),
-                        ),
-                        items: UserRole.values
-                            .map((role) => DropdownMenuItem(
-                                  value: role,
-                                  child: Text(_getRoleDisplayName(role)),
-                                ))
-                            .toList(),
-                        validator: FormBuilderValidators.required(),
-                        onChanged: (value) {
-                          developer.log(value.toString());
-                          setState(() {
-                            if (value == UserRole.superAdmin) {
-                              role = 'SUPER_ADMIN';
-                            } else if (value == UserRole.staff) {
-                              role = 'STAFF';
-                            } else {
-                              role = 'USER';
-                            }
-                          });
+                              items: UserRole.values
+                                  .map((role) => DropdownMenuItem(
+                                        value: role,
+                                        child: Text(_getRoleDisplayName(role)),
+                                      ))
+                                  .toList(),
+                              validator: FormBuilderValidators.required(),
+                              onChanged: (value) {
+                                developer.log(value.toString());
+                                setState(() {
+                                  if (value == UserRole.superAdmin) {
+                                    role = 'SUPER_ADMIN';
+                                  } else if (value == UserRole.staff) {
+                                    role = 'STAFF';
+                                  } else {
+                                    role = 'USER';
+                                  }
+                                });
+                              },
+                            );
+                          }
                         },
                       ),
 

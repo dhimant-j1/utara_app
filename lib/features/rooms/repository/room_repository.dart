@@ -97,4 +97,91 @@ class RoomRepository {
       throw 'An unexpected error occurred: $e';
     }
   }
+
+  // Upload CSV file for bulk room creation
+  Future<Map<String, dynamic>> uploadRoomsCSV(String filePath) async {
+    try {
+      AuthStore authStore = getIt<AuthStore>();
+
+      // Create FormData with the CSV file
+      FormData formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          filePath,
+          filename: filePath.split('/').last,
+        ),
+      });
+
+      final response = await _apiService.dio.post(
+        '/rooms/upload-rooms', // Adjust this endpoint according to your backend
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${authStore.token}',
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final data = e.response?.data;
+
+      switch (statusCode) {
+        case 400:
+          throw data['error'] ?? 'Invalid CSV file or format';
+        case 401:
+          throw 'Unauthorized access';
+        case 403:
+          throw 'You do not have permission to upload rooms';
+        case 413:
+          throw 'File too large';
+        case 422:
+          throw data['error'] ?? 'CSV validation failed';
+        case 500:
+          throw 'Server error. Please try again later';
+        default:
+          throw data?['error'] ?? 'Failed to upload CSV file';
+      }
+    } catch (e) {
+      throw 'An unexpected error occurred: $e';
+    }
+  }
+
+  // Simplified createRoom method for CSV bulk upload (kept for compatibility)
+  Future<Map<String, dynamic>> createRoomFromData(
+      Map<String, dynamic> roomData) async {
+    try {
+      AuthStore authStore = getIt<AuthStore>();
+      final response = await _apiService.dio.post(
+        '/rooms/',
+        data: roomData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${authStore.token}',
+          },
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final data = e.response?.data;
+
+      switch (statusCode) {
+        case 400:
+          throw data['error'] ?? 'Invalid room data';
+        case 401:
+          throw 'Unauthorized access';
+        case 403:
+          throw 'You do not have permission to create rooms';
+        case 409:
+          throw 'Room with this number already exists';
+        case 500:
+          throw 'Server error. Please try again later';
+        default:
+          throw data?['error'] ?? 'Failed to create room';
+      }
+    } catch (e) {
+      throw 'An unexpected error occurred: $e';
+    }
+  }
 }
