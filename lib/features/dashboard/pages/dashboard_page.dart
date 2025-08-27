@@ -157,12 +157,12 @@ class DashboardPage extends StatelessWidget {
                           onTap: () => context.push(
                               '/food-passes/user/${authStore.currentUser?.id}'),
                         ),
-                        _DashboardCard(
+                        /*_DashboardCard(
                           icon: Icons.add_box,
                           title: 'Request Room',
                           subtitle: 'Create new room request',
                           onTap: () => context.push('/room-requests/create'),
-                        ),
+                        ),*/
                       ],
                     ),
 
