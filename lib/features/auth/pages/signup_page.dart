@@ -133,7 +133,6 @@ class _SignupPageState extends State<SignupPage> {
                         ]),
                       ),
                       const SizedBox(height: 16),
-
                       FutureBuilder<bool>(
                         future: Future.value(Theme.of(context).platform ==
                                 TargetPlatform.android ||

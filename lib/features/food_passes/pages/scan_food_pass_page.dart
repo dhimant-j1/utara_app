@@ -47,6 +47,7 @@ class _ScanFoodPassPageState extends State<ScanFoodPassPage> {
                         backgroundColor: Colors.green,
                       ),
                     );
+                    GoRouter.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

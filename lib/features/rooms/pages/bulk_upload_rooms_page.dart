@@ -126,10 +126,11 @@ class _BulkUploadRoomsPageState extends State<BulkUploadRoomsPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  'room_number,floor,capacity,amenities,description\n'
-                  'A101,1,4,WiFi;AC;Projector,Conference room with projector\n'
-                  'B202,2,2,WiFi;AC,Small meeting room\n'
-                  'C303,3,8,WiFi;AC;Whiteboard,Large conference room',
+                  '''room_number,floor,type,beds,has_geyser,has_ac,has_sofa_set,sofa_set_quantity,extra_amenities,is_visible,images,images_description,building
+101,1,Standard,Single,true,true,false,0,"Mini-fridge, Desk",true,https://example.com/img1.jpg,Cozy room view,Main Building
+102,1,Deluxe,Double,true,true,true,1,"Coffee maker, Balcony",true,https://example.com/img2.jpg,Spacious double bed,Main Building
+201,2,Suite,"King,Single",true,false,true,1,"Bathtub, Walk-in closet",true,https://example.com/img3.jpg,Luxurious suite interior,Annex Building
+202,2,Standard,Single,false,true,false,0,Ironing board,false,https://example.com/img4.jpg,Simple single room,Annex Building''',
                   style: TextStyle(fontFamily: 'monospace', fontSize: 12),
                 ),
               ),
