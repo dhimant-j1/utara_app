@@ -6,6 +6,7 @@ import 'package:utara_app/features/room_requests/process_room_request_store.dart
 import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
 import 'package:utara_app/core/models/room_request.dart';
 import 'package:utara_app/core/models/room.dart';
+import 'package:utara_app/features/room_requests/stores/room_requests_store.dart';
 
 class ProcessRoomRequestPage extends StatelessWidget {
   final String requestId;
@@ -33,6 +34,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
             return Observer(
               builder: (context) {
                 final store = Provider.of<ProcessRoomRequestStore>(context);
+                final roomRequestRepository = RoomRequestsStore(RoomRequestRepository());
                 final isNarrow = constraints.maxWidth < 600;
 
                 return Center(
@@ -132,7 +134,9 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                                     status: 'APPROVED',
                                                     roomId:
                                                         store.selectedRoom!.id,
-                                                  );
+                                                  ).then((v){
+                                                    roomRequestRepository.fetchRoomRequests();
+                                                  });
                                                 },
                                         ),
                                         const SizedBox(width: 16),

@@ -182,7 +182,9 @@ class RoomRequestsListPage extends StatelessWidget {
             onTap: () {
               // Only allow processing if the request is still pending
               if (req.isPending) {
-                context.push('/room-requests/${req.id}/process', extra: req);
+                context.push('/room-requests/${req.id}/process', extra: req).then((v){
+                  store.fetchRoomRequests();
+                });
               } else {
                 // Show a snackbar informing the user that the request is already processed
                 ScaffoldMessenger.of(context).showSnackBar(
