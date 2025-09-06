@@ -132,17 +132,19 @@ class RoomRequestsListPage extends StatelessWidget {
                 _buildInfoRow(context, Icons.calendar_today,
                     'Check-out: ${dateFormat.format(req.checkOutDate.toLocal())}'),
                 const SizedBox(height: 4),
-                _buildInfoRow(context, Icons.email, 'Email: ${req.user.email}'),
-                const SizedBox(height: 4),
-                _buildInfoRow(context, Icons.phone, 'Phone: ${req.user.phone}'),
-                const SizedBox(height: 4),
-                _buildInfoRow(context, Icons.person, 'Name: ${req.user.name}'),
+                _buildInfoRow(
+                    context, Icons.email, 'Email: ${req.user?.email}'),
                 const SizedBox(height: 4),
                 _buildInfoRow(
-                    context, Icons.person, 'User Name: ${req.user.userName}'),
+                    context, Icons.phone, 'Phone: ${req.user?.phone}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(context, Icons.person, 'Name: ${req.user?.name}'),
                 const SizedBox(height: 4),
                 _buildInfoRow(
-                    context, Icons.person, 'User Type: ${req.user.userType}'),
+                    context, Icons.person, 'User Name: ${req.user?.userName}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(
+                    context, Icons.person, 'User Type: ${req.user?.userType}'),
                 const SizedBox(height: 4),
                 _buildStatusChip(context, req.status.name),
               ],
@@ -255,19 +257,19 @@ class RoomRequestsListPage extends StatelessWidget {
                       'Check-out: ${dateFormat.format(req.checkOutDate.toLocal())}'),
                   const SizedBox(height: 4),
                   _buildInfoRow(
-                      context, Icons.email, 'Email: ${req.user.email}'),
+                      context, Icons.email, 'Email: ${req.user?.email}'),
                   const SizedBox(height: 4),
                   _buildInfoRow(
-                      context, Icons.phone, 'Phone: ${req.user.phone}'),
+                      context, Icons.phone, 'Phone: ${req.user?.phone}'),
                   const SizedBox(height: 4),
                   _buildInfoRow(
-                      context, Icons.person, 'Name: ${req.user.name}'),
+                      context, Icons.person, 'Name: ${req.user?.name}'),
                   const SizedBox(height: 4),
-                  _buildInfoRow(
-                      context, Icons.person, 'User Name: ${req.user.userName}'),
+                  _buildInfoRow(context, Icons.person,
+                      'User Name: ${req.user?.userName}'),
                   const SizedBox(height: 4),
-                  _buildInfoRow(
-                      context, Icons.person, 'User Type: ${req.user.userType}'),
+                  _buildInfoRow(context, Icons.person,
+                      'User Type: ${req.user?.userType}'),
                   const Spacer(),
                   _buildStatusChip(context, req.status.name),
                 ],

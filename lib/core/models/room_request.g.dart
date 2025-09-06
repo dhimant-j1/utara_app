@@ -24,7 +24,9 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
           : DateTime.parse(json['processed_at'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      user: UserInformation.fromJson(json['user'] as Map<String, dynamic>),
+      user: json['user'] == null
+          ? null
+          : UserInformation.fromJson(json['user'] as Map<String, dynamic>),
       room: json['room'] == null
           ? null
           : Room.fromJson(json['room'] as Map<String, dynamic>),

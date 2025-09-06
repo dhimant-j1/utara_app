@@ -39,7 +39,7 @@ class RoomRequest {
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
-  final UserInformation user;
+  final UserInformation? user;
   final Room? room;
   final RoomAssignment? assignment;
 
