@@ -34,7 +34,8 @@ class ProcessRoomRequestPage extends StatelessWidget {
             return Observer(
               builder: (context) {
                 final store = Provider.of<ProcessRoomRequestStore>(context);
-                final roomRequestRepository = RoomRequestsStore(RoomRequestRepository());
+                final roomRequestRepository =
+                    RoomRequestsStore(RoomRequestRepository());
                 final isNarrow = constraints.maxWidth < 600;
 
                 return Center(
@@ -94,7 +95,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                                 title: Text(
                                                     'Room ${room.roomNumber}'),
                                                 subtitle: Text(
-                                                  'Floor: ${room.floor} • Type: ${room.type}\n'
+                                                  'Floor: ${room.floor}\n'
                                                   'Amenities: ${[
                                                     if (room.hasAc) 'AC',
                                                     if (room.hasGeyser)
@@ -129,13 +130,16 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                           onPressed: store.selectedRoom == null
                                               ? null
                                               : () {
-                                                  store.processRoomRequest(
+                                                  store
+                                                      .processRoomRequest(
                                                     requestId: requestId,
                                                     status: 'APPROVED',
                                                     roomId:
                                                         store.selectedRoom!.id,
-                                                  ).then((v){
-                                                    roomRequestRepository.fetchRoomRequests();
+                                                  )
+                                                      .then((v) {
+                                                    roomRequestRepository
+                                                        .fetchRoomRequests();
                                                   });
                                                 },
                                         ),

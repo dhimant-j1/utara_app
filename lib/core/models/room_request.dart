@@ -15,6 +15,8 @@ enum RequestStatus {
 
 @JsonSerializable()
 class RoomRequest {
+  final String place;
+  final String purpose;
   final String id;
   @JsonKey(name: 'user_id')
   final String userId;
@@ -26,8 +28,6 @@ class RoomRequest {
   final DateTime checkOutDate;
   @JsonKey(name: 'number_of_people')
   final PeopleCount numberOfPeople;
-  @JsonKey(name: 'preferred_type')
-  final RoomType preferredType;
   @JsonKey(name: 'special_requests')
   final String specialRequests;
   final RequestStatus status;
@@ -39,23 +39,26 @@ class RoomRequest {
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
+  final UserInformation user;
   final Room? room;
   final RoomAssignment? assignment;
 
   const RoomRequest({
+    required this.place,
+    required this.purpose,
     required this.id,
     required this.name,
     required this.userId,
     required this.checkInDate,
     required this.checkOutDate,
     required this.numberOfPeople,
-    required this.preferredType,
     required this.specialRequests,
     required this.status,
     this.processedBy,
     this.processedAt,
     required this.createdAt,
     required this.updatedAt,
+    required this.user,
     this.room,
     this.assignment,
   });
@@ -65,6 +68,8 @@ class RoomRequest {
   Map<String, dynamic> toJson() => _$RoomRequestToJson(this);
 
   RoomRequest copyWith({
+    String? place,
+    String? purpose,
     String? id,
     String? userId,
     String? name,
@@ -78,23 +83,26 @@ class RoomRequest {
     DateTime? processedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
+    UserInformation? user,
     Room? room,
     RoomAssignment? assignment,
   }) {
     return RoomRequest(
+      place: place ?? this.place,
+      purpose: purpose ?? this.purpose,
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
       checkInDate: checkInDate ?? this.checkInDate,
       checkOutDate: checkOutDate ?? this.checkOutDate,
       numberOfPeople: numberOfPeople ?? this.numberOfPeople,
-      preferredType: preferredType ?? this.preferredType,
       specialRequests: specialRequests ?? this.specialRequests,
       status: status ?? this.status,
       processedBy: processedBy ?? this.processedBy,
       processedAt: processedAt ?? this.processedAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      user: user ?? this.user,
       room: room ?? this.room,
       assignment: assignment ?? this.assignment,
     );
@@ -110,6 +118,44 @@ class RoomRequest {
   bool get isProcessed => isApproved || isRejected;
 }
 
+class UserInformation {
+  final String? name;
+  @JsonKey(name: 'user_name')
+  final String? userName;
+  @JsonKey(name: 'user_type')
+  final String? userType;
+  final String? email;
+  @JsonKey(name: 'phone_number')
+  final String? phone;
+
+  UserInformation({
+    required this.name,
+    required this.userName,
+    required this.userType,
+    required this.email,
+    required this.phone,
+  });
+
+  factory UserInformation.fromJson(Map<String, dynamic> json) {
+    return UserInformation(
+      name: json['name'] as String?,
+      userName: json['user_name'] as String?,
+      userType: json['user_type'] as String?,
+      email: json['email'] as String?,
+      phone: json['phone_number'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'user_name': userName,
+      'user_type': userType,
+      'email': email,
+      'phone_number': phone,
+    };
+  }
+}
 
 class PeopleCount {
   final int male;

@@ -3,14 +3,18 @@ import 'package:json_annotation/json_annotation.dart';
 part 'room.g.dart';
 
 enum RoomType {
-  @JsonValue('STANDARD')
-  standard,
-  @JsonValue('DELUXE')
-  deluxe,
-  @JsonValue('SUITE')
-  suite,
-  @JsonValue('FAMILY_ROOM')
-  familyRoom,
+  @JsonValue('SHREEHARIPLUS')
+  shreeHariPlus,
+  @JsonValue('SHREEHARI')
+  shreeHari,
+  @JsonValue('SARJUPLUS')
+  sarjuPlus,
+  @JsonValue('SARJU')
+  sarju,
+  @JsonValue('NEELKANTHPLUS')
+  neelkanthPlus,
+  @JsonValue('NEELKANTH')
+  neelkanth,
 }
 
 enum BedType {

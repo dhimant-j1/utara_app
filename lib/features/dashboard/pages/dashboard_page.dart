@@ -232,6 +232,12 @@ class DashboardPage extends StatelessWidget {
                             subtitle: 'Upload rooms via CSV',
                             onTap: () => context.push('/rooms/bulk-upload'),
                           ),
+                          _DashboardCard(
+                            icon: Icons.supervised_user_circle_sharp,
+                            title: 'Manage Users',
+                            subtitle: 'Manage Users type',
+                            onTap: () => context.push('/users/manage'),
+                          ),
                         ],
                       ),
                     ],

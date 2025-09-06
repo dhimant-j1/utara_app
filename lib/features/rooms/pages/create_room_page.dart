@@ -17,7 +17,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
 
   final _roomNumberController = TextEditingController();
   final _floorController = TextEditingController();
-  String _type = 'STANDARD';
+  String _type = 'SHREEHARIPLUS';
   final List<Map<String, dynamic>> _beds = [
     {'type': 'SINGLE', 'quantity': 1}
   ];
@@ -218,20 +218,28 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
       value: _type,
       items: const [
         DropdownMenuItem(
-          value: 'STANDARD',
-          child: Text('Standard Room'),
+          value: 'SHREEHARIPLUS',
+          child: Text('Shree Hari Plus'),
         ),
         DropdownMenuItem(
-          value: 'DELUXE',
-          child: Text('Deluxe Room'),
+          value: 'SHREEHARI',
+          child: Text('Shree Hari'),
         ),
         DropdownMenuItem(
-          value: 'SUITE',
-          child: Text('Suite'),
+          value: 'SARJUPLUS',
+          child: Text('Sarju Plus'),
         ),
         DropdownMenuItem(
-          value: 'FAMILY_ROOM',
-          child: Text('Family Room'),
+          value: 'SARJU',
+          child: Text('Sarju'),
+        ),
+        DropdownMenuItem(
+          value: 'NEELKANTHPLUS',
+          child: Text('Neelkanth Plus'),
+        ),
+        DropdownMenuItem(
+          value: 'NEELKANTH',
+          child: Text('Neelkanth'),
         ),
       ],
       onChanged: (value) {

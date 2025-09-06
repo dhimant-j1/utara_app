@@ -21,6 +21,25 @@ class _RoomListPageState extends State<RoomListPage> {
     _loadRooms();
   }
 
+  String getRoomType(String typeCode) {
+    switch (typeCode) {
+      case 'SHREEHARIPLUS':
+        return 'Shree Hari Plus';
+      case 'SHREEHARI':
+        return 'Shree Hari';
+      case 'SARJUPLUS':
+        return 'Sarju Plus';
+      case 'SARJU':
+        return 'Sarju';
+      case 'NEELKANTHPLUS':
+        return 'Neelkanth Plus';
+      case 'NEELKANTH':
+        return 'Neelkanth';
+      default:
+        return typeCode;
+    }
+  }
+
   Future<void> _loadRooms() async {
     try {
       final rooms = await _repository.getRooms();
@@ -63,7 +82,7 @@ class _RoomListPageState extends State<RoomListPage> {
                     runSpacing: 4,
                     children: [
                       Text('Floor: ${room['floor']}'),
-                      Text('Type: ${room['type']}'),
+                      Text('Type: ${getRoomType(room['type'])}'),
                       Text('AC: ${room['has_ac'] ? 'Yes' : 'No'}'),
                       Text('Geyser: ${room['has_geyser'] ? 'Yes' : 'No'}'),
                     ],
@@ -153,7 +172,9 @@ class _RoomListPageState extends State<RoomListPage> {
                       child: _buildResponsiveList(context),
                     ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/rooms/create').then((v){_repository.getRooms();}),
+        onPressed: () => context.push('/rooms/create').then((v) {
+          _repository.getRooms();
+        }),
         child: const Icon(Icons.add),
       ),
     );

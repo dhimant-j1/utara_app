@@ -75,8 +75,10 @@ Map<String, dynamic> _$RoomToJson(Room instance) => <String, dynamic>{
     };
 
 const _$RoomTypeEnumMap = {
-  RoomType.standard: 'STANDARD',
-  RoomType.deluxe: 'DELUXE',
-  RoomType.suite: 'SUITE',
-  RoomType.familyRoom: 'FAMILY_ROOM',
+  RoomType.shreeHariPlus: 'SHREEHARIPLUS',
+  RoomType.shreeHari: 'SHREEHARI',
+  RoomType.sarjuPlus: 'SARJUPLUS',
+  RoomType.sarju: 'SARJU',
+  RoomType.neelkanthPlus: 'NEELKANTHPLUS',
+  RoomType.neelkanth: 'NEELKANTH',
 };

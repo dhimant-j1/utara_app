@@ -132,6 +132,18 @@ class RoomRequestsListPage extends StatelessWidget {
                 _buildInfoRow(context, Icons.calendar_today,
                     'Check-out: ${dateFormat.format(req.checkOutDate.toLocal())}'),
                 const SizedBox(height: 4),
+                _buildInfoRow(context, Icons.email, 'Email: ${req.user.email}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(context, Icons.phone, 'Phone: ${req.user.phone}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(context, Icons.person, 'Name: ${req.user.name}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(
+                    context, Icons.person, 'User Name: ${req.user.userName}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(
+                    context, Icons.person, 'User Type: ${req.user.userType}'),
+                const SizedBox(height: 4),
                 _buildStatusChip(context, req.status.name),
               ],
             ),
@@ -139,7 +151,9 @@ class RoomRequestsListPage extends StatelessWidget {
             onTap: () {
               // Only allow processing if the request is still pending
               if (req.isPending) {
-                context.push('/room-requests/${req.id}/process', extra: req).then((value){
+                context
+                    .push('/room-requests/${req.id}/process', extra: req)
+                    .then((value) {
                   store.fetchRoomRequests();
                 });
               } else {
@@ -182,7 +196,9 @@ class RoomRequestsListPage extends StatelessWidget {
             onTap: () {
               // Only allow processing if the request is still pending
               if (req.isPending) {
-                context.push('/room-requests/${req.id}/process', extra: req).then((v){
+                context
+                    .push('/room-requests/${req.id}/process', extra: req)
+                    .then((v) {
                   store.fetchRoomRequests();
                 });
               } else {
@@ -237,6 +253,21 @@ class RoomRequestsListPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   _buildInfoRow(context, Icons.calendar_today,
                       'Check-out: ${dateFormat.format(req.checkOutDate.toLocal())}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(
+                      context, Icons.email, 'Email: ${req.user.email}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(
+                      context, Icons.phone, 'Phone: ${req.user.phone}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(
+                      context, Icons.person, 'Name: ${req.user.name}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(
+                      context, Icons.person, 'User Name: ${req.user.userName}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(
+                      context, Icons.person, 'User Type: ${req.user.userType}'),
                   const Spacer(),
                   _buildStatusChip(context, req.status.name),
                 ],
