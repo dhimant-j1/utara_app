@@ -12,7 +12,8 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
       userId: json['user_id'] as String,
       checkInDate: DateTime.parse(json['check_in_date'] as String),
       checkOutDate: DateTime.parse(json['check_out_date'] as String),
-      numberOfPeople: (json['number_of_people'] as num).toInt(),
+      numberOfPeople: PeopleCount.fromJson(
+          json['number_of_people'] as Map<String, dynamic>),
       preferredType: $enumDecode(_$RoomTypeEnumMap, json['preferred_type']),
       specialRequests: json['special_requests'] as String,
       status: $enumDecode(_$RequestStatusEnumMap, json['status']),
@@ -33,8 +34,8 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
 Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
       'user_id': instance.userId,
+      'name': instance.name,
       'check_in_date': instance.checkInDate.toIso8601String(),
       'check_out_date': instance.checkOutDate.toIso8601String(),
       'number_of_people': instance.numberOfPeople,

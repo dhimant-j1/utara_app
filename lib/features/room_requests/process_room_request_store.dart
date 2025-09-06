@@ -100,7 +100,7 @@ abstract class _ProcessRoomRequestStore with Store {
     isGeneratingFoodPasses = true;
     try {
       // Generate member names based on number of people
-      final memberNames = List.generate(request.numberOfPeople, (index) {
+      final memberNames = List.generate(request.numberOfPeople.total, (index) {
         if (index == 0)
           return 'Guest-${request.name}'; // First guest uses user ID
         return 'Guest-${request.name}-${index + 1}'; // Additional guests get numbered

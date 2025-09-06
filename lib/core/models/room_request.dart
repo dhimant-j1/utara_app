@@ -25,7 +25,7 @@ class RoomRequest {
   @JsonKey(name: 'check_out_date')
   final DateTime checkOutDate;
   @JsonKey(name: 'number_of_people')
-  final int numberOfPeople;
+  final PeopleCount numberOfPeople;
   @JsonKey(name: 'preferred_type')
   final RoomType preferredType;
   @JsonKey(name: 'special_requests')
@@ -70,7 +70,7 @@ class RoomRequest {
     String? name,
     DateTime? checkInDate,
     DateTime? checkOutDate,
-    int? numberOfPeople,
+    PeopleCount? numberOfPeople,
     RoomType? preferredType,
     String? specialRequests,
     RequestStatus? status,
@@ -108,4 +108,37 @@ class RoomRequest {
   bool get isApproved => status == RequestStatus.approved;
   bool get isRejected => status == RequestStatus.rejected;
   bool get isProcessed => isApproved || isRejected;
+}
+
+
+class PeopleCount {
+  final int male;
+  final int female;
+  final int children;
+  final int total;
+
+  PeopleCount({
+    required this.male,
+    required this.female,
+    required this.children,
+    required this.total,
+  });
+
+  factory PeopleCount.fromJson(Map<String, dynamic> json) {
+    return PeopleCount(
+      male: json['male'] as int,
+      female: json['female'] as int,
+      children: json['children'] as int,
+      total: json['total'] as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'male': male,
+      'female': female,
+      'children': children,
+      'total': total,
+    };
+  }
 }
