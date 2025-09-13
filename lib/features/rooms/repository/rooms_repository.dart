@@ -10,7 +10,7 @@ class RoomsRepository {
 
   Future<List<Room>> fetchAvailableRooms({String? type}) async {
     AuthStore authStore = getIt<AuthStore>();
-    final uri = Uri.parse('$baseUrl/rooms/');
+    final uri = Uri.parse('$baseUrl/rooms/?is_visible=true&is_occupied=false');
 
     final response = await http.get(
       uri,

@@ -40,28 +40,29 @@ class RoomRequest {
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
   final UserInformation? user;
+  final String? reference;
   final Room? room;
   final RoomAssignment? assignment;
 
-  const RoomRequest({
-    required this.place,
-    required this.purpose,
-    required this.id,
-    required this.name,
-    required this.userId,
-    required this.checkInDate,
-    required this.checkOutDate,
-    required this.numberOfPeople,
-    required this.specialRequests,
-    required this.status,
-    this.processedBy,
-    this.processedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.user,
-    this.room,
-    this.assignment,
-  });
+  const RoomRequest(
+      {required this.place,
+      required this.purpose,
+      required this.id,
+      required this.name,
+      required this.userId,
+      required this.checkInDate,
+      required this.checkOutDate,
+      required this.numberOfPeople,
+      required this.specialRequests,
+      required this.status,
+      this.processedBy,
+      this.processedAt,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.user,
+      this.room,
+      this.assignment,
+      this.reference});
 
   factory RoomRequest.fromJson(Map<String, dynamic> json) =>
       _$RoomRequestFromJson(json);
@@ -86,6 +87,7 @@ class RoomRequest {
     UserInformation? user,
     Room? room,
     RoomAssignment? assignment,
+    String? reference,
   }) {
     return RoomRequest(
       place: place ?? this.place,
@@ -105,6 +107,7 @@ class RoomRequest {
       user: user ?? this.user,
       room: room ?? this.room,
       assignment: assignment ?? this.assignment,
+      reference: reference ?? this.reference,
     );
   }
 

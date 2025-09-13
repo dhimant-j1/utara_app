@@ -19,8 +19,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<ProcessRoomRequestStore>(
-      create: (_) => ProcessRoomRequestStore(RoomRequestRepository())
-        ..fetchAvailableRooms('STANDARD'),
+      create: (_) => ProcessRoomRequestStore(RoomRequestRepository())..fetchAvailableRooms('STANDARD'),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Process Room Request'),
@@ -34,8 +33,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
             return Observer(
               builder: (context) {
                 final store = Provider.of<ProcessRoomRequestStore>(context);
-                final roomRequestRepository =
-                    RoomRequestsStore(RoomRequestRepository());
+                final roomRequestRepository = RoomRequestsStore(RoomRequestRepository());
                 final isNarrow = constraints.maxWidth < 600;
 
                 return Center(
@@ -58,8 +56,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  if (!store.isProcessing &&
-                                      store.processedRequest == null) ...[
+                                  if (!store.isProcessing && store.processedRequest == null) ...[
                                     const Text(
                                       'Available Rooms',
                                       style: TextStyle(
@@ -69,8 +66,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 16),
                                     if (store.isLoadingRooms)
-                                      const Center(
-                                          child: CircularProgressIndicator())
+                                      const Center(child: CircularProgressIndicator())
                                     else if (store.availableRooms.isEmpty)
                                       const Center(
                                         child: Text('No available rooms found'),
@@ -79,34 +75,24 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                       SizedBox(
                                         height: 200,
                                         child: ListView.builder(
-                                          itemCount:
-                                              store.availableRooms.length,
+                                          itemCount: store.availableRooms.length,
                                           itemBuilder: (context, index) {
-                                            final room =
-                                                store.availableRooms[index];
-                                            final isSelected =
-                                                store.selectedRoom?.id ==
-                                                    room.id;
+                                            final room = store.availableRooms[index];
+                                            final isSelected = store.selectedRoom?.id == room.id;
                                             return Card(
-                                              color: isSelected
-                                                  ? Colors.blue.shade50
-                                                  : null,
+                                              color: isSelected ? Colors.blue.shade50 : null,
                                               child: ListTile(
-                                                title: Text(
-                                                    'Room ${room.roomNumber}'),
+                                                title: Text('Room ${room.roomNumber}'),
                                                 subtitle: Text(
                                                   'Floor: ${room.floor}\n'
                                                   'Amenities: ${[
                                                     if (room.hasAc) 'AC',
-                                                    if (room.hasGeyser)
-                                                      'Geyser',
-                                                    if (room.hasSofaSet)
-                                                      'Sofa Set',
+                                                    if (room.hasGeyser) 'Geyser',
+                                                    if (room.hasSofaSet) 'Sofa Set',
                                                   ].join(', ')}',
                                                 ),
                                                 selected: isSelected,
-                                                onTap: () =>
-                                                    store.selectRoom(room),
+                                                onTap: () => store.selectRoom(room),
                                               ),
                                             );
                                           },
@@ -114,8 +100,7 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                       ),
                                     const SizedBox(height: 24),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         ElevatedButton.icon(
                                           icon: const Icon(Icons.check),
@@ -134,12 +119,10 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                                       .processRoomRequest(
                                                     requestId: requestId,
                                                     status: 'APPROVED',
-                                                    roomId:
-                                                        store.selectedRoom!.id,
+                                                    roomId: store.selectedRoom!.id,
                                                   )
                                                       .then((v) {
-                                                    roomRequestRepository
-                                                        .fetchRoomRequests();
+                                                    roomRequestRepository.fetchRoomRequests();
                                                   });
                                                 },
                                         ),
@@ -169,41 +152,27 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                       padding: const EdgeInsets.only(top: 16),
                                       child: Text(
                                         store.errorMessage!,
-                                        style:
-                                            const TextStyle(color: Colors.red),
+                                        style: const TextStyle(color: Colors.red),
                                       ),
                                     ),
-                                  if (store.isProcessing)
-                                    const Center(
-                                        child: CircularProgressIndicator()),
+                                  if (store.isProcessing) const Center(child: CircularProgressIndicator()),
                                   if (store.processedRequest != null) ...[
                                     Icon(
-                                      store.processedRequest!.isApproved
-                                          ? Icons.check_circle
-                                          : Icons.cancel,
+                                      store.processedRequest!.isApproved ? Icons.check_circle : Icons.cancel,
                                       size: 64,
-                                      color: store.processedRequest!.isApproved
-                                          ? Colors.green
-                                          : Colors.red,
+                                      color: store.processedRequest!.isApproved ? Colors.green : Colors.red,
                                     ),
                                     const SizedBox(height: 16),
                                     Text(
-                                      store.processedRequest!.isApproved
-                                          ? 'Request Approved'
-                                          : 'Request Rejected',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall,
+                                      store.processedRequest!.isApproved ? 'Request Approved' : 'Request Rejected',
+                                      style: Theme.of(context).textTheme.headlineSmall,
                                       textAlign: TextAlign.center,
                                     ),
-                                    if (store.processedRequest!.room !=
-                                        null) ...[
+                                    if (store.processedRequest!.room != null) ...[
                                       const SizedBox(height: 16),
                                       Text(
                                         'Room ${store.processedRequest!.room!.roomNumber} assigned',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
+                                        style: Theme.of(context).textTheme.titleMedium,
                                         textAlign: TextAlign.center,
                                       ),
                                     ],
@@ -230,13 +199,11 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              const Icon(Icons.restaurant_menu,
-                                                  color: Colors.green),
+                                              const Icon(Icons.restaurant_menu, color: Colors.green),
                                               const SizedBox(width: 8),
                                               Text(
                                                 store.foodPassMessage!,
-                                                style: const TextStyle(
-                                                    color: Colors.green),
+                                                style: const TextStyle(color: Colors.green),
                                               ),
                                             ],
                                           ),

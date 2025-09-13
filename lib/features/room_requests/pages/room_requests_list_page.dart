@@ -146,6 +146,12 @@ class RoomRequestsListPage extends StatelessWidget {
                 _buildInfoRow(
                     context, Icons.person, 'User Type: ${req.user?.userType}'),
                 const SizedBox(height: 4),
+                _buildInfoRow(
+                    context, Icons.person, 'Reference: ${req.reference}'),
+                const SizedBox(height: 4),
+                _buildInfoRow(context, Icons.person,
+                    'Special Requests: ${req.specialRequests}'),
+                const SizedBox(height: 4),
                 _buildStatusChip(context, req.status.name),
               ],
             ),
@@ -270,6 +276,12 @@ class RoomRequestsListPage extends StatelessWidget {
                   const SizedBox(height: 4),
                   _buildInfoRow(context, Icons.person,
                       'User Type: ${req.user?.userType}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(
+                      context, Icons.person, 'Reference: ${req.reference}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(context, Icons.person,
+                      'Special Requests: ${req.specialRequests}'),
                   const Spacer(),
                   _buildStatusChip(context, req.status.name),
                 ],

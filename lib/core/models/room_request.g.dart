@@ -33,6 +33,7 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
       assignment: json['assignment'] == null
           ? null
           : RoomAssignment.fromJson(json['assignment'] as Map<String, dynamic>),
+      reference: json['reference'] as String?,
     );
 
 Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
@@ -52,6 +53,7 @@ Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'user': instance.user,
+      'reference': instance.reference,
       'room': instance.room,
       'assignment': instance.assignment,
     };
