@@ -111,6 +111,8 @@ abstract class _ProcessRoomRequestStore with Store {
         memberNames: memberNames,
         startDate: request.checkInDate,
         endDate: request.checkOutDate,
+        diningHall: 'Default Hall', // TODO: Get from room request or configuration
+        colorCode: '#FF0000', // TODO: Get from room request or configuration
       );
       foodPassMessage =
           'Generated ${result['total_passes']} food passes for ${request.numberOfPeople} guests';

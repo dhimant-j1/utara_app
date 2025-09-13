@@ -15,6 +15,7 @@ import '../../features/room_requests/pages/process_room_request_page.dart';
 import '../../features/food_passes/pages/food_passes_list_page.dart';
 import '../../features/food_passes/pages/generate_food_passes_page.dart';
 import '../../features/food_passes/pages/scan_food_pass_page.dart';
+import '../../features/food_passes/pages/food_pass_categories_page.dart';
 import '../../features/dashboard/pages/dashboard_page.dart';
 import '../../features/users/pages/create_user_page.dart';
 import '../../features/rooms/pages/bulk_upload_rooms_page.dart';
@@ -133,6 +134,10 @@ class AppRouter {
           GoRoute(
             path: 'scan',
             builder: (context, state) => const ScanFoodPassPage(),
+          ),
+          GoRoute(
+            path: 'categories',
+            builder: (context, state) => const FoodPassCategoriesPage(),
           ),
           GoRoute(
             path: 'user/:userId',

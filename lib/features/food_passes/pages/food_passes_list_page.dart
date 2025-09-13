@@ -37,8 +37,7 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
       _loadUsers();
     }
     selectedUserId = widget.userId;
-    foodPassesStore = FoodPassesStore(FoodPassRepository())
-      ..fetchFoodPasses(selectedUserId);
+    foodPassesStore = FoodPassesStore(FoodPassRepository())..fetchFoodPasses(selectedUserId);
   }
 
   Future<void> _loadUsers() async {
@@ -77,47 +76,12 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
       value: foodPassesStore,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-              selectedUserId != null ? 'User Food Passes' : 'My Food Passes'),
+          title: Text(selectedUserId != null ? 'User Food Passes' : 'My Food Passes'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.go('/dashboard'),
           ),
           actions: [
-            if (authStore.isAdmin || authStore.isStaff) ...[
-              if (isLoadingUsers)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                )
-              else
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: DropdownButton<String>(
-                    value: selectedUserId,
-                    hint: const Text('Select User'),
-                    items: [
-                      if (users != null)
-                        ...users!.map((user) => DropdownMenuItem<String>(
-                              value: user['id'] as String,
-                              child: Text(user['name'] as String),
-                            )),
-                    ],
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedUserId = value;
-                      });
-                      foodPassesStore.fetchFoodPasses(value);
-                    },
-                  ),
-                ),
-            ],
             Observer(
               builder: (context) {
                 final store = Provider.of<FoodPassesStore>(context);
@@ -162,6 +126,13 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
             ),
           ],
         ),
+        floatingActionButton: (authStore.isAdmin || authStore.isStaff)
+            ? FloatingActionButton.extended(
+                onPressed: () => context.go('/food-passes/categories'),
+                icon: const Icon(Icons.category),
+                label: const Text('Manage Categories'),
+              )
+            : null,
         body: Observer(
           builder: (context) {
             final store = Provider.of<FoodPassesStore>(context);
@@ -175,8 +146,7 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline,
-                        size: 48, color: Colors.red),
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
                     const SizedBox(height: 16),
                     Text(
                       store.errorMessage!,
@@ -194,127 +164,216 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
             }
 
             if (store.foodPasses.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.no_meals, size: 64, color: Colors.grey),
-                    const SizedBox(height: 16),
-                    Text(
-                      store.selectedDate != null || store.showUsedOnly != null
-                          ? 'No food passes found with current filters'
-                          : 'No food passes found',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    if (store.selectedDate != null ||
-                        store.showUsedOnly != null) ...[
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          store.setSelectedDate(null);
-                          store.setShowUsedOnly(null);
-                        },
-                        child: const Text('Clear Filters'),
+              return Column(
+                children: [
+                  searchFoodPassWidget(),
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.no_meals, size: 64, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            store.selectedDate != null || store.showUsedOnly != null
+                                ? 'No food passes found with current filters'
+                                : 'No food passes found',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          if (store.selectedDate != null || store.showUsedOnly != null) ...[
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                store.setSelectedDate(null);
+                                store.setShowUsedOnly(null);
+                              },
+                              child: const Text('Clear Filters'),
+                            ),
+                          ],
+                        ],
                       ),
-                    ],
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               );
             }
 
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: store.foodPasses.length,
-              itemBuilder: (context, index) {
-                final pass = store.foodPasses[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: ListTile(
-                    leading: Icon(
-                      _getMealTypeIcon(pass.mealType),
-                      color: pass.isUsed ? Colors.grey : Colors.green,
-                      size: 32,
-                    ),
-                    title: Row(
-                      children: [
-                        Text(
-                          '${pass.mealType.name.toUpperCase()} - ${pass.memberName}',
-                          style: TextStyle(
-                            decoration:
-                                pass.isUsed ? TextDecoration.lineThrough : null,
-                            color: pass.isUsed ? Colors.grey : null,
+            return Column(
+              children: [
+                searchFoodPassWidget(),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: store.foodPasses.length,
+                    itemBuilder: (context, index) {
+                      final pass = store.foodPasses[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        child: ListTile(
+                          leading: Icon(
+                            _getMealTypeIcon(pass.mealType),
+                            color: pass.isUsed ? Colors.grey : Colors.green,
+                            size: 32,
                           ),
-                        ),
-                        if (pass.isUsed)
-                          const Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Icon(Icons.check_circle,
-                                color: Colors.grey, size: 16),
-                          ),
-                      ],
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(DateFormat('EEEE, MMMM d, y').format(pass.date)),
-                        if (pass.isUsed && pass.usedAt != null)
-                          Text(
-                            'Used on ${DateFormat('MMM d, y h:mm a').format(pass.usedAt!)}',
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                      ],
-                    ),
-                    trailing: !pass.isUsed
-                        ? const Icon(Icons.qr_code, color: Colors.blue)
-                        : null,
-                    onTap: !pass.isUsed
-                        ? () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Food Pass QR Code'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: 200,
-                                      height: 200,
-                                      child: pass.qrCode.startsWith(
-                                              'data:image/png;base64,')
-                                          ? Image.memory(
-                                              base64Decode(
-                                                  pass.qrCode.split(',')[1]),
-                                              fit: BoxFit.contain,
-                                            )
-                                          : Image.network(pass.qrCode),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      '${pass.mealType.name.toUpperCase()} - ${pass.memberName}',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(DateFormat('EEEE, MMMM d, y')
-                                        .format(pass.date)),
-                                  ],
+                          title: Row(
+                            children: [
+                              Text(
+                                '${pass.mealType.name.toUpperCase()} - ${pass.memberName}',
+                                style: TextStyle(
+                                  decoration: pass.isUsed ? TextDecoration.lineThrough : null,
+                                  color: pass.isUsed ? Colors.grey : null,
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Close'),
-                                  ),
-                                ],
                               ),
-                            );
-                          }
-                        : null,
+                              if (pass.isUsed)
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Icon(Icons.check_circle, color: Colors.grey, size: 16),
+                                ),
+                            ],
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (pass.diningHall != null)
+                                Text(
+                                  "Dining Hall: ${pass.diningHall}",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              Text(DateFormat('EEEE, MMMM d, y').format(pass.date)),
+                              if (pass.isUsed && pass.usedAt != null)
+                                Text(
+                                  'Used on ${DateFormat('MMM d, y h:mm a').format(pass.usedAt!)}',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                            ],
+                          ),
+                          trailing: !pass.isUsed ? const Icon(Icons.qr_code, color: Colors.blue) : null,
+                          onTap: !pass.isUsed
+                              ? () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Food Pass QR Code'),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            width: 200,
+                                            height: 200,
+                                            child: pass.qrCode.startsWith('data:image/png;base64,')
+                                                ? Image.memory(
+                                                    base64Decode(pass.qrCode.split(',')[1]),
+                                                    fit: BoxFit.contain,
+                                                  )
+                                                : Image.network(pass.qrCode),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            '${pass.mealType.name.toUpperCase()} - ${pass.memberName}',
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "Dining Hall: ${pass.diningHall}",
+                                            style: const TextStyle(fontSize: 14),
+                                          ),
+                                          Text(
+                                            "Date: ${DateFormat('EEEE, MMMM d, y').format(pass.date)}",
+                                            style: const TextStyle(fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Close'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              : null,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             );
           },
         ),
       ),
+    );
+  }
+
+  Widget searchFoodPassWidget() {
+    return Autocomplete<String>(
+      initialValue: TextEditingValue(
+        text: users?.firstWhere(
+              (user) => user['id'] == selectedUserId,
+              orElse: () => {'name': ''},
+            )['name'] ??
+            '',
+      ),
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text == '' || users == null) {
+          return const Iterable<String>.empty();
+        }
+        return users!
+            .where((user) => user['name'].toString().toLowerCase().contains(textEditingValue.text.toLowerCase()))
+            .map((user) => user['name'] as String);
+      },
+      onSelected: (String selectedName) {
+        final selectedUser = users?.firstWhere(
+          (user) => user['name'] == selectedName,
+          orElse: () => {'id': null},
+        );
+        final String? userId = selectedUser?['id'] as String?;
+        setState(() {
+          selectedUserId = userId;
+        });
+        foodPassesStore.fetchFoodPasses(userId);
+      },
+      fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+        return SizedBox(
+          width: MediaQuery.of(context).size.width / 1.1,
+          child: TextField(
+            controller: textEditingController,
+            focusNode: focusNode,
+            decoration: InputDecoration(
+              hintText: 'Select User',
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          ),
+        );
+      },
+      optionsViewBuilder: (context, onSelected, options) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 4,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: options.length,
+                itemBuilder: (context, index) {
+                  final option = options.elementAt(index);
+                  return ListTile(
+                    title: Text(option),
+                    onTap: () {
+                      onSelected(option);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -13,6 +13,8 @@ FoodPass _$FoodPassFromJson(Map<String, dynamic> json) => FoodPass(
       mealType: $enumDecode(_$MealTypeEnumMap, json['meal_type']),
       date: DateTime.parse(json['date'] as String),
       qrCode: json['qr_code'] as String,
+      diningHall: json['dining_hall'] as String?,
+      colorCode: json['color_code'] as String?,
       isUsed: json['is_used'] as bool,
       usedAt: json['used_at'] == null
           ? null
@@ -28,6 +30,8 @@ Map<String, dynamic> _$FoodPassToJson(FoodPass instance) => <String, dynamic>{
       'meal_type': _$MealTypeEnumMap[instance.mealType]!,
       'date': instance.date.toIso8601String(),
       'qr_code': instance.qrCode,
+      'dining_hall': instance.diningHall,
+      'color_code': instance.colorCode,
       'is_used': instance.isUsed,
       'used_at': instance.usedAt?.toIso8601String(),
       'created_by': instance.createdBy,

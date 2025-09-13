@@ -13,6 +13,8 @@ class FoodPassRepository {
     required List<String> memberNames,
     required DateTime startDate,
     required DateTime endDate,
+    required String diningHall,
+    required String colorCode,
   }) async {
     AuthStore authStore = getIt<AuthStore>();
     final response = await http.post(
@@ -26,6 +28,8 @@ class FoodPassRepository {
         'member_names': memberNames,
         'start_date': startDate.toUtc().toIso8601String(),
         'end_date': endDate.toUtc().toIso8601String(),
+        'dining_hall': diningHall,
+        'color_code': colorCode,
       }),
     );
 

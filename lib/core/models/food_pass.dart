@@ -23,6 +23,10 @@ class FoodPass {
   final DateTime date;
   @JsonKey(name: 'qr_code')
   final String qrCode;
+  @JsonKey(name: 'dining_hall')
+  final String? diningHall;
+  @JsonKey(name: 'color_code')
+  final String? colorCode;
   @JsonKey(name: 'is_used')
   final bool isUsed;
   @JsonKey(name: 'used_at')
@@ -39,6 +43,8 @@ class FoodPass {
     required this.mealType,
     required this.date,
     required this.qrCode,
+    required this.diningHall,
+    required this.colorCode,
     required this.isUsed,
     this.usedAt,
     required this.createdBy,
@@ -55,6 +61,8 @@ class FoodPass {
     MealType? mealType,
     DateTime? date,
     String? qrCode,
+    String? diningHall,
+    String? colorCode,
     bool? isUsed,
     DateTime? usedAt,
     String? createdBy,
@@ -67,6 +75,8 @@ class FoodPass {
       mealType: mealType ?? this.mealType,
       date: date ?? this.date,
       qrCode: qrCode ?? this.qrCode,
+      diningHall: diningHall ?? this.diningHall,
+      colorCode: colorCode ?? this.colorCode,
       isUsed: isUsed ?? this.isUsed,
       usedAt: usedAt ?? this.usedAt,
       createdBy: createdBy ?? this.createdBy,
@@ -83,4 +93,4 @@ class FoodPass {
   }
 
   bool get canBeUsed => !isUsed && date.isAfter(DateTime.now().subtract(const Duration(days: 1)));
-} 
+}

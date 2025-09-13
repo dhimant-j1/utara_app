@@ -12,8 +12,7 @@ final GetIt getIt = GetIt.instance;
 Future<void> setupServiceLocator() async {
   // Services
   getIt.registerLazySingleton<ApiService>(() => ApiService());
-  getIt.registerLazySingleton<AuthService>(
-      () => AuthService(getIt<ApiService>()));
+  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt<ApiService>()));
 
   // Repositories
   getIt.registerLazySingleton(() => RoomRepository(getIt<ApiService>()));
@@ -26,10 +25,8 @@ Future<void> setupServiceLocator() async {
   await getIt<AuthStore>().init();
 
   // Other stores
-  getIt.registerLazySingleton<UserStore>(
-      () => UserStore(getIt<UserRepository>()));
-  getIt.registerLazySingleton<FoodPassStore>(
-      () => FoodPassStore(getIt<ApiService>().dio));
+  getIt.registerLazySingleton<UserStore>(() => UserStore(getIt<UserRepository>()));
+  getIt.registerLazySingleton<FoodPassStore>(() => FoodPassStore(getIt<ApiService>().dio));
 
   // Set up auth token interceptor
   // Note: This is a simplified version without MobX reaction

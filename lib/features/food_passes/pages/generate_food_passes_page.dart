@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import '../repository/food_pass_repository.dart';
+import '../repository/food_pass_category_repository.dart';
 import '../../../core/stores/auth_store.dart';
+import '../../../core/models/food_pass_category.dart';
 import '../../users/repository/user_repository.dart';
 
 class GenerateFoodPassesPage extends StatefulWidget {
@@ -18,20 +20,25 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
   final _authStore = GetIt.instance<AuthStore>();
   final _foodPassRepository = FoodPassRepository();
   final _userRepository = GetIt.instance<UserRepository>();
+  final _foodPassCategoryRepository = FoodPassCategoryRepository();
 
   DateTime? _startDate;
   DateTime? _endDate;
   bool _isLoading = false;
   bool _isLoadingUsers = false;
+  bool _isLoadingCategories = false;
   String? _errorMessage;
   String? _successMessage;
   String? _selectedUserId;
+  String? _selectedCategoryId;
   List<Map<String, dynamic>> _users = [];
+  List<FoodPassCategory> _categories = [];
 
   @override
   void initState() {
     super.initState();
     _loadUsers();
+    _loadCategories();
   }
 
   @override
@@ -49,6 +56,18 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
       setState(() => _errorMessage = 'Failed to load users: ${e.toString()}');
     } finally {
       setState(() => _isLoadingUsers = false);
+    }
+  }
+
+  Future<void> _loadCategories() async {
+    setState(() => _isLoadingCategories = true);
+    try {
+      final categories = await _foodPassCategoryRepository.getAllCategories();
+      setState(() => _categories = categories);
+    } catch (e) {
+      setState(() => _errorMessage = 'Failed to load categories: ${e.toString()}');
+    } finally {
+      setState(() => _isLoadingCategories = false);
     }
   }
 
@@ -82,6 +101,10 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
       setState(() => _errorMessage = 'Please select a user');
       return;
     }
+    if (_selectedCategoryId == null) {
+      setState(() => _errorMessage = 'Please select a food pass category');
+      return;
+    }
     if (_startDate == null || _endDate == null) {
       setState(() => _errorMessage = 'Please select both start and end dates');
       return;
@@ -94,29 +117,30 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
     });
 
     try {
-      final memberNames = _memberNamesController.text
-          .split(',')
-          .map((name) => name.trim())
-          .where((name) => name.isNotEmpty)
-          .toList();
+      final memberNames =
+          _memberNamesController.text.split(',').map((name) => name.trim()).where((name) => name.isNotEmpty).toList();
+
+      final selectedCategory = _categories.firstWhere((cat) => cat.id == _selectedCategoryId!);
 
       await _foodPassRepository.generateFoodPasses(
         userId: _selectedUserId!,
         memberNames: memberNames,
         startDate: _startDate!,
         endDate: _endDate!,
+        diningHall: selectedCategory.buildingName,
+        colorCode: selectedCategory.colorCode,
       );
 
       setState(() {
         _successMessage = 'Food passes generated successfully!';
         _selectedUserId = null;
+        _selectedCategoryId = null;
         _memberNamesController.clear();
         _startDate = null;
         _endDate = null;
       });
     } catch (e) {
-      setState(
-          () => _errorMessage = e.toString().replaceAll('Exception: ', ''));
+      setState(() => _errorMessage = e.toString().replaceAll('Exception: ', ''));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -174,14 +198,12 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.check_circle,
-                                  color: Colors.green.shade700),
+                              Icon(Icons.check_circle, color: Colors.green.shade700),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   _successMessage!,
-                                  style:
-                                      TextStyle(color: Colors.green.shade700),
+                                  style: TextStyle(color: Colors.green.shade700),
                                 ),
                               ),
                             ],
@@ -200,8 +222,7 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.error_outline,
-                                  color: Colors.red.shade700),
+                              Icon(Icons.error_outline, color: Colors.red.shade700),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -229,14 +250,12 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                                 return DropdownMenuItem<String>(
                                   value: user['id'],
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
                                         user['name'] ?? 'Unknown',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500),
+                                        style: const TextStyle(fontWeight: FontWeight.w500),
                                       ),
                                       Text(
                                         user['email'] ?? '',
@@ -261,6 +280,50 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                             ),
                       const SizedBox(height: 16),
 
+                      // Food Pass Category Selection Dropdown
+                      _isLoadingCategories
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : DropdownButtonFormField<String>(
+                              value: _selectedCategoryId,
+                              decoration: const InputDecoration(
+                                labelText: 'Select Food Pass Category',
+                                prefixIcon: Icon(Icons.category),
+                              ),
+                              hint: const Text('Choose a category'),
+                              items: _categories.map((category) {
+                                return DropdownMenuItem<String>(
+                                  value: category.id,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: Color(
+                                              int.parse('0xFF${category.colorCode.replaceAll('#', '')}') & 0xFFFFFFFF),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(category.buildingName),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() => _selectedCategoryId = value);
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a food pass category';
+                                }
+                                return null;
+                              },
+                            ),
+                      const SizedBox(height: 16),
+
                       // Member Names Field
                       TextFormField(
                         controller: _memberNamesController,
@@ -268,18 +331,14 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                           labelText: 'Member Names',
                           hintText: 'Enter names separated by commas',
                           prefixIcon: Icon(Icons.group),
-                          helperText:
-                              'Example: John Doe, Jane Smith, Bob Wilson',
+                          helperText: 'Example: John Doe, Jane Smith, Bob Wilson',
                         ),
                         maxLines: 3,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Please enter at least one member name';
                           }
-                          final names = value
-                              .split(',')
-                              .map((name) => name.trim())
-                              .where((name) => name.isNotEmpty);
+                          final names = value.split(',').map((name) => name.trim()).where((name) => name.isNotEmpty);
                           if (names.isEmpty) {
                             return 'Please enter valid member names';
                           }
@@ -301,8 +360,7 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                                 ? '${_startDate!.day}/${_startDate!.month}/${_startDate!.year}'
                                 : 'Select start date',
                             style: TextStyle(
-                              color:
-                                  _startDate != null ? null : Colors.grey[600],
+                              color: _startDate != null ? null : Colors.grey[600],
                             ),
                           ),
                         ),
@@ -339,8 +397,7 @@ class _GenerateFoodPassesPageState extends State<GenerateFoodPassesPage> {
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Text('Generate Food Passes'),
                       ),
