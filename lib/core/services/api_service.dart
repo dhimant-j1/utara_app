@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:utara_app/utils/const.dart';
 
@@ -21,7 +23,7 @@ class ApiService {
     _dio.interceptors.add(LogInterceptor(
       requestBody: true,
       responseBody: true,
-      logPrint: (object) => print(object),
+      logPrint: (object) => log(object.toString()),
     ));
   }
 

@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:utara_app/features/users/pages/manage_user.dart';
 import '../stores/auth_store.dart';
 import '../../features/auth/pages/login_page.dart';
 import '../../features/auth/pages/signup_page.dart';
@@ -117,6 +118,10 @@ class AppRouter {
       GoRoute(
         path: '/users/create',
         builder: (context, state) => const CreateUserPage(),
+      ),
+      GoRoute(
+        path: '/users/manage',
+        builder: (context, state) => const ManageUserPage(),
       ),
 
       // Food pass routes

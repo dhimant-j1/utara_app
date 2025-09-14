@@ -41,6 +41,22 @@ mixin _$UserStore on _UserStoreBase, Store {
     });
   }
 
+  late final _$userListAtom =
+      Atom(name: '_UserStoreBase.userList', context: context);
+
+  @override
+  List<ManangeUser> get userList {
+    _$userListAtom.reportRead();
+    return super.userList;
+  }
+
+  @override
+  set userList(List<ManangeUser> value) {
+    _$userListAtom.reportWrite(value, super.userList, () {
+      super.userList = value;
+    });
+  }
+
   late final _$createUserAsyncAction =
       AsyncAction('_UserStoreBase.createUser', context: context);
 
@@ -57,6 +73,43 @@ mixin _$UserStore on _UserStoreBase, Store {
         name: name,
         phoneNumber: phoneNumber,
         role: role));
+  }
+
+  late final _$getUsersListAsyncAction =
+      AsyncAction('_UserStoreBase.getUsersList', context: context);
+
+  @override
+  Future<List<Map<String, dynamic>>> getUsersList() {
+    return _$getUsersListAsyncAction.run(() => super.getUsersList());
+  }
+
+  late final _$deleteUserAsyncAction =
+      AsyncAction('_UserStoreBase.deleteUser', context: context);
+
+  @override
+  Future<bool> deleteUser({required String userId, required int index}) {
+    return _$deleteUserAsyncAction
+        .run(() => super.deleteUser(userId: userId, index: index));
+  }
+
+  late final _$updateUserAsyncAction =
+      AsyncAction('_UserStoreBase.updateUser', context: context);
+
+  @override
+  Future<bool> updateUser(
+      {required String email,
+      required String password,
+      required String name,
+      required String phoneNumber,
+      required String role,
+      required String userId}) {
+    return _$updateUserAsyncAction.run(() => super.updateUser(
+        email: email,
+        password: password,
+        name: name,
+        phoneNumber: phoneNumber,
+        role: role,
+        userId: userId));
   }
 
   late final _$_UserStoreBaseActionController =
@@ -77,7 +130,8 @@ mixin _$UserStore on _UserStoreBase, Store {
   String toString() {
     return '''
 isLoading: ${isLoading},
-errorMessage: ${errorMessage}
+errorMessage: ${errorMessage},
+userList: ${userList}
     ''';
   }
 }
