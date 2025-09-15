@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../core/di/service_locator.dart';
 import '../repository/room_request_repository.dart';
 
 class CreateRoomRequestPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class CreateRoomRequestPage extends StatefulWidget {
 
 class _CreateRoomRequestPageState extends State<CreateRoomRequestPage> {
   final _formKey = GlobalKey<FormState>();
-  final _roomRequestRepository = RoomRequestRepository();
+  final _roomRequestRepository = RoomRequestRepository(getIt());
 
   DateTime? _checkInDate;
   DateTime? _checkOutDate;

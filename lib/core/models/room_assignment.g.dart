@@ -18,6 +18,12 @@ RoomAssignment _$RoomAssignmentFromJson(Map<String, dynamic> json) =>
       assignedAt: DateTime.parse(json['assigned_at'] as String),
       checkedIn: json['checked_in'] as bool,
       checkedOut: json['checked_out'] as bool,
+      checkedInAt: json['checked_in_at'] == null
+          ? null
+          : DateTime.parse(json['checked_in_at'] as String),
+      checkedOutAt: json['checked_out_at'] == null
+          ? null
+          : DateTime.parse(json['checked_out_at'] as String),
     );
 
 Map<String, dynamic> _$RoomAssignmentToJson(RoomAssignment instance) =>
@@ -28,6 +34,8 @@ Map<String, dynamic> _$RoomAssignmentToJson(RoomAssignment instance) =>
       'request_id': instance.requestId,
       'check_in_date': instance.checkInDate.toIso8601String(),
       'check_out_date': instance.checkOutDate.toIso8601String(),
+      'checked_in_at': instance.checkedInAt?.toIso8601String(),
+      'checked_out_at': instance.checkedOutAt?.toIso8601String(),
       'assigned_by': instance.assignedBy,
       'assigned_at': instance.assignedAt.toIso8601String(),
       'checked_in': instance.checkedIn,

@@ -3,8 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:utara_app/core/models/room_request.dart';
 import 'package:utara_app/features/room_requests/stores/room_requests_store.dart';
 import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
+
+import '../../../core/di/service_locator.dart';
 
 class RoomRequestsListPage extends StatelessWidget {
   const RoomRequestsListPage({super.key});
@@ -12,8 +15,8 @@ class RoomRequestsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<RoomRequestsStore>(
-      create: (_) =>
-          RoomRequestsStore(RoomRequestRepository())..fetchRoomRequests(),
+      create: (_) => RoomRequestsStore(RoomRequestRepository(getIt()))
+        ..fetchRoomRequests(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Room Requests'),
@@ -153,6 +156,7 @@ class RoomRequestsListPage extends StatelessWidget {
                     'Special Requests: ${req.specialRequests}'),
                 const SizedBox(height: 4),
                 _buildStatusChip(context, req.status.name),
+                _buildCheckInCheckOut(context, store, req),
               ],
             ),
             isThreeLine: true,
@@ -179,6 +183,62 @@ class RoomRequestsListPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _buildCheckInCheckOut(
+      BuildContext context, RoomRequestsStore store, RoomRequest req) {
+    return req.status != RequestStatus.approved
+        ? SizedBox.shrink()
+        : ((req.assignment?.checkedIn ?? false) &&
+                (req.assignment?.checkedOut ?? false))
+            ? Column(
+                children: [
+                  const SizedBox(height: 4),
+                  _buildInfoRow(context, Icons.calendar_month,
+                      'Checked-in At: ${DateFormat("dd MMM yyyy h:mm a").format(req.assignment?.checkedInAt ?? DateTime.now())}'),
+                  const SizedBox(height: 4),
+                  _buildInfoRow(context, Icons.calendar_month,
+                      'Checked-out At: ${DateFormat("dd MMM yyyy h:mm a").format(req.assignment?.checkedOutAt ?? DateTime.now())}'),
+                ],
+              )
+            : Column(
+                children: [
+                  Visibility(
+                    visible: req.assignment?.checkedInAt != null,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 4),
+                        _buildInfoRow(context, Icons.calendar_month,
+                            'Checked-in At: ${DateFormat("dd MMM yyyy h:mm a").format(req.assignment?.checkedInAt ?? DateTime.now())}'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  ElevatedButton(
+                    onPressed: () {
+                      store.isLoading ? null : store.checkInCheckOut(req: req);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: Center(
+                      child: store.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              req.assignment?.checkedIn ?? false
+                                  ? "Check Out"
+                                  : "Check In",
+                            ),
+                    ),
+                  ),
+                ],
+              );
   }
 
   Widget _buildGridView(BuildContext context, RoomRequestsStore store) {
@@ -284,6 +344,7 @@ class RoomRequestsListPage extends StatelessWidget {
                       'Special Requests: ${req.specialRequests}'),
                   const Spacer(),
                   _buildStatusChip(context, req.status.name),
+                  _buildCheckInCheckOut(context, store, req),
                 ],
               ),
             ),

@@ -15,6 +15,10 @@ class RoomAssignment {
   final DateTime checkInDate;
   @JsonKey(name: 'check_out_date')
   final DateTime checkOutDate;
+  @JsonKey(name: 'checked_in_at')
+  final DateTime? checkedInAt;
+  @JsonKey(name: 'checked_out_at')
+  final DateTime? checkedOutAt;
   @JsonKey(name: 'assigned_by')
   final String assignedBy;
   @JsonKey(name: 'assigned_at')
@@ -35,6 +39,8 @@ class RoomAssignment {
     required this.assignedAt,
     required this.checkedIn,
     required this.checkedOut,
+    this.checkedInAt,
+    this.checkedOutAt,
   });
 
   factory RoomAssignment.fromJson(Map<String, dynamic> json) =>

@@ -66,6 +66,15 @@ mixin _$RoomRequestsStore on _RoomRequestsStore, Store {
         .run(() => super.fetchRoomRequests(status: status, userId: userId));
   }
 
+  late final _$checkInCheckOutAsyncAction =
+      AsyncAction('_RoomRequestsStore.checkInCheckOut', context: context);
+
+  @override
+  Future<void> checkInCheckOut({RoomRequest? req}) {
+    return _$checkInCheckOutAsyncAction
+        .run(() => super.checkInCheckOut(req: req));
+  }
+
   @override
   String toString() {
     return '''

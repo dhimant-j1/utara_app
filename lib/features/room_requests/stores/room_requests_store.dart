@@ -1,6 +1,6 @@
 import 'package:mobx/mobx.dart';
-import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
 import 'package:utara_app/core/models/room_request.dart';
+import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
 
 part 'room_requests_store.g.dart';
 
@@ -28,6 +28,25 @@ abstract class _RoomRequestsStore with Store {
       final requests =
           await repository.fetchRoomRequests(status: status, userId: userId);
       roomRequests = ObservableList.of(requests);
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future<void> checkInCheckOut({RoomRequest? req}) async {
+    isLoading = true;
+    errorMessage = null;
+    try {
+      final success = await repository.checkInCheckOut(
+        id: req?.assignment?.id ?? "",
+        isCheckedIn: req?.assignment?.checkedIn ?? false,
+      );
+      if (success) {
+        await fetchRoomRequests();
+      }
     } catch (e) {
       errorMessage = e.toString();
     } finally {
