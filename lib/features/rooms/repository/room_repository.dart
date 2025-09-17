@@ -20,6 +20,7 @@ class RoomRepository {
     String? extraAmenities,
     required bool isVisible,
     List<Map<String, dynamic>>? images,
+    required String building,
   }) async {
     try {
       AuthStore authStore = getIt<AuthStore>();
@@ -37,11 +38,11 @@ class RoomRepository {
           if (extraAmenities != null) 'extra_amenities': extraAmenities,
           'is_visible': isVisible,
           if (images != null) 'images': images,
+          'building': building,
         },
         options: Options(
           headers: {
-            'Authorization':
-                'Bearer ${authStore.token}', // Replace with actual token
+            'Authorization': 'Bearer ${authStore.token}', // Replace with actual token
           },
         ),
       );
@@ -70,19 +71,21 @@ class RoomRepository {
   Future<List<Map<String, dynamic>>> getRooms({
     int? floor,
     String? type,
+    String? building,
     bool? isVisible,
     bool? isOccupied,
   }) async {
     try {
       AuthStore authStore = getIt<AuthStore>();
-      
+
       // Build query parameters
       Map<String, dynamic> queryParams = {};
       if (floor != null) queryParams['floor'] = floor;
       if (type != null) queryParams['type'] = type;
+      if (building != null) queryParams['building'] = building;
       if (isVisible != null) queryParams['is_visible'] = isVisible;
       if (isOccupied != null) queryParams['is_occupied'] = isOccupied;
-      
+
       final response = await _apiService.dio.get(
         '/rooms/',
         queryParameters: queryParams,
@@ -320,8 +323,7 @@ class RoomRepository {
   }
 
   // Simplified createRoom method for CSV bulk upload (kept for compatibility)
-  Future<Map<String, dynamic>> createRoomFromData(
-      Map<String, dynamic> roomData) async {
+  Future<Map<String, dynamic>> createRoomFromData(Map<String, dynamic> roomData) async {
     try {
       AuthStore authStore = getIt<AuthStore>();
       final response = await _apiService.dio.post(
@@ -351,6 +353,69 @@ class RoomRepository {
           throw 'Server error. Please try again later';
         default:
           throw data?['error'] ?? 'Failed to create room';
+      }
+    } catch (e) {
+      throw 'An unexpected error occurred: $e';
+    }
+  }
+
+  // Get all buildings
+  Future<Map<String, dynamic>> getBuildings() async {
+    try {
+      AuthStore authStore = getIt<AuthStore>();
+      final response = await _apiService.dio.get(
+        '/rooms/buildings',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${authStore.token}',
+          },
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final data = e.response?.data;
+
+      switch (statusCode) {
+        case 401:
+          throw 'Unauthorized access';
+        case 500:
+          throw 'Server error. Please try again later';
+        default:
+          throw data?['error'] ?? 'Failed to fetch buildings';
+      }
+    } catch (e) {
+      throw 'An unexpected error occurred: $e';
+    }
+  }
+
+  // Get floors for a specific building
+  Future<Map<String, dynamic>> getFloors(String building) async {
+    try {
+      AuthStore authStore = getIt<AuthStore>();
+      final response = await _apiService.dio.get(
+        '/rooms/floors',
+        queryParameters: {'building': building},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${authStore.token}',
+          },
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final data = e.response?.data;
+
+      switch (statusCode) {
+        case 400:
+          throw 'Building parameter is required';
+        case 401:
+          throw 'Unauthorized access';
+        case 500:
+          throw 'Server error. Please try again later';
+        default:
+          throw data?['error'] ?? 'Failed to fetch floors';
       }
     } catch (e) {
       throw 'An unexpected error occurred: $e';

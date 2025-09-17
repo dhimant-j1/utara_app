@@ -16,6 +16,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   bool _isLoading = false;
 
   final _roomNumberController = TextEditingController();
+  final _buildingController = TextEditingController();
   final _floorController = TextEditingController();
   String _type = 'SHREEHARIPLUS';
   final List<Map<String, dynamic>> _beds = [
@@ -27,6 +28,11 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   final _sofaSetQuantityController = TextEditingController();
   final _extraAmenitiesController = TextEditingController();
   bool _isVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
@@ -46,14 +52,12 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         hasGeyser: _hasGeyser,
         hasAc: _hasAc,
         hasSofaSet: _hasSofaSet,
-        sofaSetQuantity:
-            _hasSofaSet && _sofaSetQuantityController.text.isNotEmpty
-                ? int.parse(_sofaSetQuantityController.text)
-                : null,
-        extraAmenities: _extraAmenitiesController.text.isNotEmpty
-            ? _extraAmenitiesController.text
+        sofaSetQuantity: _hasSofaSet && _sofaSetQuantityController.text.isNotEmpty
+            ? int.parse(_sofaSetQuantityController.text)
             : null,
+        extraAmenities: _extraAmenitiesController.text.isNotEmpty ? _extraAmenitiesController.text : null,
         isVisible: _isVisible,
+        building: _buildingController.text,
       );
 
       if (!mounted) return;
@@ -80,6 +84,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   @override
   void dispose() {
     _roomNumberController.dispose();
+    _buildingController.dispose();
     _floorController.dispose();
     _sofaSetQuantityController.dispose();
     _extraAmenitiesController.dispose();
@@ -96,10 +101,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         ),
         child: Card(
           elevation: 4,
-          margin:
-              EdgeInsets.symmetric(vertical: 24, horizontal: isWide ? 0 : 8),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          margin: EdgeInsets.symmetric(vertical: 24, horizontal: isWide ? 0 : 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Form(
@@ -107,6 +110,9 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Building field
+                  _buildingField(),
+                  const SizedBox(height: 16),
                   // Room Number & Floor in a Row on wide screens
                   isWide
                       ? Row(
@@ -153,10 +159,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       ),
                       onPressed: _isLoading ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        textStyle: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -194,11 +198,12 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         labelText: 'Floor',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.layers_outlined),
+        hintText: 'Enter floor number',
       ),
       keyboardType: TextInputType.number,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter floor number';
+          return 'Please enter a floor number';
         }
         if (int.tryParse(value) == null) {
           return 'Please enter a valid number';
@@ -317,8 +322,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                             if (value == null || value.isEmpty) {
                               return 'Required';
                             }
-                            if (int.tryParse(value) == null ||
-                                int.parse(value) < 1) {
+                            if (int.tryParse(value) == null || int.parse(value) < 1) {
                               return 'Invalid';
                             }
                             return null;
@@ -331,8 +335,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       if (_beds.length > 1) ...[
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.remove_circle_outline,
-                              color: Colors.redAccent),
+                          icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
                           onPressed: () {
                             setState(() {
                               _beds.removeAt(index);
@@ -469,6 +472,24 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           return null;
         },
       ),
+    );
+  }
+
+  Widget _buildingField() {
+    return TextFormField(
+      controller: _buildingController,
+      decoration: const InputDecoration(
+        labelText: 'Building',
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.business_outlined),
+        hintText: 'Enter building name',
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a building name';
+        }
+        return null;
+      },
     );
   }
 

@@ -10,6 +10,8 @@ import '../../features/rooms/pages/room_details_page.dart';
 import '../../features/rooms/pages/create_room_page.dart';
 import '../../features/rooms/pages/edit_room_page.dart';
 import '../../features/rooms/pages/room_stats_page.dart';
+import '../../features/rooms/pages/building_selection_page.dart';
+import '../../features/rooms/pages/floor_selection_page.dart';
 import '../../features/room_requests/pages/room_requests_list_page.dart';
 import '../../features/room_requests/pages/create_room_request_page.dart';
 import '../../features/room_requests/pages/process_room_request_page.dart';
@@ -63,8 +65,12 @@ class AppRouter {
       // Room routes
       GoRoute(
         path: '/rooms',
-        builder: (context, state) => const RoomListPage(),
+        builder: (context, state) => const BuildingSelectionPage(),
         routes: [
+          GoRoute(
+            path: 'list',
+            builder: (context, state) => const RoomListPage(),
+          ),
           GoRoute(
             path: 'create',
             builder: (context, state) => const CreateRoomPage(),
