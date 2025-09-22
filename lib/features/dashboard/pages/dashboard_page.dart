@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:utara_app/utils/const.dart';
 import '../../../core/stores/auth_store.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -81,9 +83,9 @@ class DashboardPage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 32,
-                              backgroundColor: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.1),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).primaryColor.withOpacity(0.1),
                               child: Icon(
                                 Icons.person,
                                 size: 40,
@@ -100,9 +102,7 @@ class DashboardPage extends StatelessWidget {
                                     style: Theme.of(context)
                                         .textTheme
                                         .headlineSmall
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
@@ -110,9 +110,7 @@ class DashboardPage extends StatelessWidget {
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
-                                        ?.copyWith(
-                                          color: Colors.grey[600],
-                                        ),
+                                        ?.copyWith(color: Colors.grey[600]),
                                   ),
                                 ],
                               ),
@@ -127,8 +125,8 @@ class DashboardPage extends StatelessWidget {
                     Text(
                       'Quick Actions',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     ResponsiveGrid(
@@ -155,7 +153,8 @@ class DashboardPage extends StatelessWidget {
                               ? 'Manage food passes'
                               : 'My food passes',
                           onTap: () => context.push(
-                              '/food-passes/user/${authStore.currentUser?.id}'),
+                            '/food-passes/user/${authStore.currentUser?.id}',
+                          ),
                         ),
                         /*_DashboardCard(
                           icon: Icons.add_box,
@@ -172,8 +171,8 @@ class DashboardPage extends StatelessWidget {
                       Text(
                         'Management',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       ResponsiveGrid(
@@ -213,8 +212,8 @@ class DashboardPage extends StatelessWidget {
                       Text(
                         'Administration',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       ResponsiveGrid(
@@ -230,7 +229,12 @@ class DashboardPage extends StatelessWidget {
                             icon: Icons.upload_file,
                             title: 'Bulk Upload Rooms',
                             subtitle: 'Upload rooms via CSV',
-                            onTap: () => context.push('/rooms/bulk-upload'),
+                            onTap: () async {
+                              final url = Uri.parse(Const.baseUrl);
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              }
+                            },
                           ),
                           _DashboardCard(
                             icon: Icons.supervised_user_circle_sharp,
@@ -257,10 +261,7 @@ class DashboardPage extends StatelessWidget {
         .toString()
         .split('.')
         .last
-        .replaceAllMapped(
-          RegExp(r'([A-Z])'),
-          (match) => ' ${match.group(1)}',
-        )
+        .replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(1)}')
         .trim();
   }
 }
@@ -288,10 +289,7 @@ class ResponsiveGrid extends StatelessWidget {
           spacing: spacing,
           runSpacing: spacing,
           children: List.generate(children.length, (index) {
-            return SizedBox(
-              width: itemWidth,
-              child: children[index],
-            );
+            return SizedBox(width: itemWidth, child: children[index]);
           }),
         );
       },
@@ -316,9 +314,7 @@ class _DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -328,25 +324,21 @@ class _DashboardCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 48,
-                color: Colors.grey[600],
-              ),
+              Icon(icon, size: 48, color: Colors.grey[600]),
               const SizedBox(height: 16),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

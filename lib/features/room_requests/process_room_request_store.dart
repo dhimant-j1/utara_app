@@ -16,8 +16,8 @@ abstract class _ProcessRoomRequestStore with Store {
   final FoodPassRepository foodPassRepository;
 
   _ProcessRoomRequestStore(this.repository)
-      : roomsRepository = RoomsRepository(),
-        foodPassRepository = FoodPassRepository();
+    : roomsRepository = RoomsRepository(),
+      foodPassRepository = FoodPassRepository();
 
   @observable
   bool isProcessing = false;
@@ -48,8 +48,9 @@ abstract class _ProcessRoomRequestStore with Store {
     isLoadingRooms = true;
     errorMessage = null;
     try {
-      final rooms =
-          await roomsRepository.fetchAvailableRooms(type: preferredType);
+      final rooms = await roomsRepository.fetchAvailableRooms(
+        type: preferredType,
+      );
       availableRooms = ObservableList.of(rooms);
     } catch (e) {
       errorMessage = 'Failed to load available rooms: $e';
@@ -86,9 +87,9 @@ abstract class _ProcessRoomRequestStore with Store {
       processedRequest = result;
 
       // Generate food passes if request is approved
-      if (status == 'APPROVED' && result.userId.isNotEmpty) {
+      /* if (status == 'APPROVED' && result.userId.isNotEmpty) {
         await _generateFoodPasses(result);
-      }
+      } */
     } catch (e) {
       errorMessage = e.toString();
     } finally {

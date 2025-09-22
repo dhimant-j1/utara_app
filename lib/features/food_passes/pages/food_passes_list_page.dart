@@ -14,10 +14,7 @@ import 'dart:convert';
 class FoodPassesListPage extends StatefulWidget {
   final String? userId;
 
-  const FoodPassesListPage({
-    super.key,
-    this.userId,
-  });
+  const FoodPassesListPage({super.key, this.userId});
 
   @override
   State<FoodPassesListPage> createState() => _FoodPassesListPageState();
@@ -37,7 +34,8 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
       _loadUsers();
     }
     selectedUserId = widget.userId;
-    foodPassesStore = FoodPassesStore(FoodPassRepository())..fetchFoodPasses(selectedUserId);
+    foodPassesStore = FoodPassesStore(FoodPassRepository())
+      ..fetchFoodPasses(selectedUserId);
   }
 
   Future<void> _loadUsers() async {
@@ -76,7 +74,9 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
       value: foodPassesStore,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(selectedUserId != null ? 'User Food Passes' : 'My Food Passes'),
+          title: Text(
+            selectedUserId != null ? 'User Food Passes' : 'My Food Passes',
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => context.go('/dashboard'),
@@ -108,18 +108,12 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                   icon: const Icon(Icons.filter_list),
                   onSelected: store.setShowUsedOnly,
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: null,
-                      child: Text('All Passes'),
-                    ),
+                    const PopupMenuItem(value: null, child: Text('All Passes')),
                     const PopupMenuItem(
                       value: false,
                       child: Text('Unused Only'),
                     ),
-                    const PopupMenuItem(
-                      value: true,
-                      child: Text('Used Only'),
-                    ),
+                    const PopupMenuItem(value: true, child: Text('Used Only')),
                   ],
                 );
               },
@@ -146,7 +140,11 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       store.errorMessage!,
@@ -172,15 +170,21 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.no_meals, size: 64, color: Colors.grey),
+                          const Icon(
+                            Icons.no_meals,
+                            size: 64,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(height: 16),
                           Text(
-                            store.selectedDate != null || store.showUsedOnly != null
+                            store.selectedDate != null ||
+                                    store.showUsedOnly != null
                                 ? 'No food passes found with current filters'
                                 : 'No food passes found',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
-                          if (store.selectedDate != null || store.showUsedOnly != null) ...[
+                          if (store.selectedDate != null ||
+                              store.showUsedOnly != null) ...[
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () {
@@ -220,14 +224,20 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                               Text(
                                 '${pass.mealType.name.toUpperCase()} - ${pass.memberName}',
                                 style: TextStyle(
-                                  decoration: pass.isUsed ? TextDecoration.lineThrough : null,
+                                  decoration: pass.isUsed
+                                      ? TextDecoration.lineThrough
+                                      : null,
                                   color: pass.isUsed ? Colors.grey : null,
                                 ),
                               ),
                               if (pass.isUsed)
                                 const Padding(
                                   padding: EdgeInsets.only(left: 8),
-                                  child: Icon(Icons.check_circle, color: Colors.grey, size: 16),
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: Colors.grey,
+                                    size: 16,
+                                  ),
                                 ),
                             ],
                           ),
@@ -237,11 +247,11 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                               if (pass.diningHall != null)
                                 Text(
                                   "Dining Hall: ${pass.diningHall}",
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  ),
+                                  style: const TextStyle(fontSize: 14),
                                 ),
-                              Text(DateFormat('EEEE, MMMM d, y').format(pass.date)),
+                              Text(
+                                DateFormat('EEEE, MMMM d, y').format(pass.date),
+                              ),
                               if (pass.isUsed && pass.usedAt != null)
                                 Text(
                                   'Used on ${DateFormat('MMM d, y h:mm a').format(pass.usedAt!)}',
@@ -249,7 +259,9 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                                 ),
                             ],
                           ),
-                          trailing: !pass.isUsed ? const Icon(Icons.qr_code, color: Colors.blue) : null,
+                          trailing: !pass.isUsed
+                              ? const Icon(Icons.qr_code, color: Colors.blue)
+                              : null,
                           onTap: !pass.isUsed
                               ? () {
                                   showDialog(
@@ -262,9 +274,14 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                                           SizedBox(
                                             width: 200,
                                             height: 200,
-                                            child: pass.qrCode.startsWith('data:image/png;base64,')
+                                            child:
+                                                pass.qrCode.startsWith(
+                                                  'data:image/png;base64,',
+                                                )
                                                 ? Image.memory(
-                                                    base64Decode(pass.qrCode.split(',')[1]),
+                                                    base64Decode(
+                                                      pass.qrCode.split(',')[1],
+                                                    ),
                                                     fit: BoxFit.contain,
                                                   )
                                                 : Image.network(pass.qrCode),
@@ -272,21 +289,28 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
                                           const SizedBox(height: 16),
                                           Text(
                                             '${pass.mealType.name.toUpperCase()} - ${pass.memberName}',
-                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                           Text(
                                             "Dining Hall: ${pass.diningHall}",
-                                            style: const TextStyle(fontSize: 14),
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
                                           Text(
                                             "Date: ${DateFormat('EEEE, MMMM d, y').format(pass.date)}",
-                                            style: const TextStyle(fontSize: 14),
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
                                         ],
                                       ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: const Text('Close'),
                                         ),
                                       ],
@@ -310,18 +334,26 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
   Widget searchFoodPassWidget() {
     return Autocomplete<String>(
       initialValue: TextEditingValue(
-        text: users?.firstWhere(
+        text:
+            users?.firstWhere(
               (user) => user['id'] == selectedUserId,
               orElse: () => {'name': ''},
             )['name'] ??
             '',
       ),
       optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text == '' || users == null) {
+        if (users == null) {
           return const Iterable<String>.empty();
         }
+        if (textEditingValue.text.isEmpty) {
+          return users!.map((user) => user['name'] as String);
+        }
         return users!
-            .where((user) => user['name'].toString().toLowerCase().contains(textEditingValue.text.toLowerCase()))
+            .where(
+              (user) => user['name'].toString().toLowerCase().contains(
+                textEditingValue.text.toLowerCase(),
+              ),
+            )
             .map((user) => user['name'] as String);
       },
       onSelected: (String selectedName) {
@@ -335,20 +367,24 @@ class _FoodPassesListPageState extends State<FoodPassesListPage> {
         });
         foodPassesStore.fetchFoodPasses(userId);
       },
-      fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width / 1.1,
-          child: TextField(
-            controller: textEditingController,
-            focusNode: focusNode,
-            decoration: InputDecoration(
-              hintText: 'Select User',
-              border: const OutlineInputBorder(),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            ),
-          ),
-        );
-      },
+      fieldViewBuilder:
+          (context, textEditingController, focusNode, onFieldSubmitted) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width / 1.1,
+              child: TextField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                decoration: InputDecoration(
+                  hintText: 'Select User',
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                ),
+              ),
+            );
+          },
       optionsViewBuilder: (context, onSelected, options) {
         return Align(
           alignment: Alignment.topLeft,
