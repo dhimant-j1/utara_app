@@ -20,7 +20,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   final _floorController = TextEditingController();
   String _type = 'SHREEHARIPLUS';
   final List<Map<String, dynamic>> _beds = [
-    {'type': 'SINGLE', 'quantity': 1}
+    {'type': 'SINGLE', 'quantity': 1},
   ];
   bool _hasGeyser = false;
   bool _hasAc = false;
@@ -29,9 +29,66 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   final _extraAmenitiesController = TextEditingController();
   bool _isVisible = true;
 
+  // Building and floor state
+  List<String> _buildings = [];
+  List<int> _floors = [];
+  String? _selectedBuilding;
+  int? _selectedFloor;
+  bool _isManualBuilding = false;
+  bool _isManualFloor = false;
+  bool _isLoadingBuildings = false;
+  bool _isLoadingFloors = false;
+
   @override
   void initState() {
     super.initState();
+    _fetchBuildings();
+  }
+
+  Future<void> _fetchBuildings() async {
+    setState(() {
+      _isLoadingBuildings = true;
+    });
+    try {
+      final response = await _roomRepository.getBuildings();
+      final buildings = List<String>.from(response['buildings'] ?? []);
+      setState(() {
+        _buildings = buildings;
+        _isLoadingBuildings = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingBuildings = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load buildings: $e')));
+      }
+    }
+  }
+
+  Future<void> _fetchFloors(String building) async {
+    setState(() {
+      _isLoadingFloors = true;
+    });
+    try {
+      final response = await _roomRepository.getFloors(building);
+      final floors = List<int>.from(response['floors'] ?? []);
+      setState(() {
+        _floors = floors;
+        _isLoadingFloors = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingFloors = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load floors: $e')));
+      }
+    }
   }
 
   Future<void> _submitForm() async {
@@ -44,20 +101,30 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     });
 
     try {
+      final building = _isManualBuilding
+          ? _buildingController.text
+          : (_selectedBuilding ?? _buildingController.text);
+      final floor = _isManualFloor
+          ? int.parse(_floorController.text)
+          : (_selectedFloor ?? int.parse(_floorController.text));
+
       await _roomRepository.createRoom(
         roomNumber: _roomNumberController.text,
-        floor: int.parse(_floorController.text),
+        floor: floor,
         type: _type,
         beds: _beds,
         hasGeyser: _hasGeyser,
         hasAc: _hasAc,
         hasSofaSet: _hasSofaSet,
-        sofaSetQuantity: _hasSofaSet && _sofaSetQuantityController.text.isNotEmpty
+        sofaSetQuantity:
+            _hasSofaSet && _sofaSetQuantityController.text.isNotEmpty
             ? int.parse(_sofaSetQuantityController.text)
             : null,
-        extraAmenities: _extraAmenitiesController.text.isNotEmpty ? _extraAmenitiesController.text : null,
+        extraAmenities: _extraAmenitiesController.text.isNotEmpty
+            ? _extraAmenitiesController.text
+            : null,
         isVisible: _isVisible,
-        building: _buildingController.text,
+        building: building,
       );
 
       if (!mounted) return;
@@ -69,9 +136,9 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create room: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to create room: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -96,13 +163,16 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
     final isWide = constraints.maxWidth > 600;
     final form = Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: isWide ? 500 : double.infinity,
-        ),
+        constraints: BoxConstraints(maxWidth: isWide ? 500 : double.infinity),
         child: Card(
           elevation: 4,
-          margin: EdgeInsets.symmetric(vertical: 24, horizontal: isWide ? 0 : 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          margin: EdgeInsets.symmetric(
+            vertical: 24,
+            horizontal: isWide ? 0 : 8,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Form(
@@ -148,9 +218,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Icon(Icons.check),
                       label: Padding(
@@ -159,8 +227,13 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       ),
                       onPressed: _isLoading ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -192,21 +265,91 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   }
 
   Widget _floorField() {
-    return TextFormField(
-      controller: _floorController,
+    if (_isLoadingFloors) {
+      return TextFormField(
+        decoration: const InputDecoration(
+          labelText: 'Floor',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.layers_outlined),
+        ),
+        enabled: false,
+      );
+    }
+
+    if (_selectedBuilding == null ||
+        _isManualBuilding ||
+        _isManualFloor ||
+        _floors.isEmpty) {
+      return TextFormField(
+        controller: _floorController,
+        decoration: InputDecoration(
+          labelText: 'Floor',
+          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.layers_outlined),
+          hintText: 'Enter floor number',
+          suffixIcon:
+              (_selectedBuilding != null &&
+                  !_isManualBuilding &&
+                  _floors.isNotEmpty)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_drop_down),
+                  onPressed: () {
+                    setState(() {
+                      _isManualFloor = false;
+                      _floorController.clear();
+                      _selectedFloor = null;
+                    });
+                  },
+                )
+              : null,
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a floor number';
+          }
+          if (int.tryParse(value) == null) {
+            return 'Please enter a valid number';
+          }
+          return null;
+        },
+        onChanged: (value) {
+          _selectedFloor = int.tryParse(value);
+        },
+      );
+    }
+
+    return DropdownButtonFormField<int>(
       decoration: const InputDecoration(
         labelText: 'Floor',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.layers_outlined),
-        hintText: 'Enter floor number',
       ),
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a floor number';
+      value: _selectedFloor,
+      items: [
+        ..._floors.map(
+          (floor) =>
+              DropdownMenuItem(value: floor, child: Text(floor.toString())),
+        ),
+        const DropdownMenuItem(value: -1, child: Text('Add New Floor')),
+      ],
+      onChanged: (value) {
+        if (value == -1) {
+          setState(() {
+            _isManualFloor = true;
+            _selectedFloor = null;
+            _floorController.clear();
+          });
+        } else {
+          setState(() {
+            _selectedFloor = value;
+            _floorController.text = value?.toString() ?? '';
+          });
         }
-        if (int.tryParse(value) == null) {
-          return 'Please enter a valid number';
+      },
+      validator: (value) {
+        if (value == null && !_isManualFloor) {
+          return 'Please select a floor';
         }
         return null;
       },
@@ -226,26 +369,11 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           value: 'SHREEHARIPLUS',
           child: Text('Shree Hari Plus'),
         ),
-        DropdownMenuItem(
-          value: 'SHREEHARI',
-          child: Text('Shree Hari'),
-        ),
-        DropdownMenuItem(
-          value: 'SARJUPLUS',
-          child: Text('Sarju Plus'),
-        ),
-        DropdownMenuItem(
-          value: 'SARJU',
-          child: Text('Sarju'),
-        ),
-        DropdownMenuItem(
-          value: 'NEELKANTHPLUS',
-          child: Text('Neelkanth Plus'),
-        ),
-        DropdownMenuItem(
-          value: 'NEELKANTH',
-          child: Text('Neelkanth'),
-        ),
+        DropdownMenuItem(value: 'SHREEHARI', child: Text('Shree Hari')),
+        DropdownMenuItem(value: 'SARJUPLUS', child: Text('Sarju Plus')),
+        DropdownMenuItem(value: 'SARJU', child: Text('Sarju')),
+        DropdownMenuItem(value: 'NEELKANTHPLUS', child: Text('Neelkanth Plus')),
+        DropdownMenuItem(value: 'NEELKANTH', child: Text('Neelkanth')),
       ],
       onChanged: (value) {
         if (value != null) {
@@ -322,7 +450,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                             if (value == null || value.isEmpty) {
                               return 'Required';
                             }
-                            if (int.tryParse(value) == null || int.parse(value) < 1) {
+                            if (int.tryParse(value) == null ||
+                                int.parse(value) < 1) {
                               return 'Invalid';
                             }
                             return null;
@@ -335,7 +464,10 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                       if (_beds.length > 1) ...[
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
+                          icon: const Icon(
+                            Icons.remove_circle_outline,
+                            color: Colors.redAccent,
+                          ),
                           onPressed: () {
                             setState(() {
                               _beds.removeAt(index);
@@ -476,17 +608,88 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   }
 
   Widget _buildingField() {
-    return TextFormField(
-      controller: _buildingController,
+    if (_isLoadingBuildings) {
+      return TextFormField(
+        decoration: const InputDecoration(
+          labelText: 'Building',
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.business_outlined),
+        ),
+        enabled: false,
+      );
+    }
+
+    if (_buildings.isEmpty || _isManualBuilding) {
+      return TextFormField(
+        controller: _buildingController,
+        decoration: InputDecoration(
+          labelText: 'Building',
+          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.business_outlined),
+          hintText: 'Enter building name',
+          suffixIcon: _buildings.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_drop_down),
+                  onPressed: () {
+                    setState(() {
+                      _isManualBuilding = false;
+                      _buildingController.clear();
+                    });
+                  },
+                )
+              : null,
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter a building name';
+          }
+          return null;
+        },
+      );
+    }
+
+    return DropdownButtonFormField<String>(
       decoration: const InputDecoration(
         labelText: 'Building',
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.business_outlined),
-        hintText: 'Enter building name',
       ),
+      value: _selectedBuilding,
+      items: [
+        ..._buildings.map(
+          (building) =>
+              DropdownMenuItem(value: building, child: Text(building)),
+        ),
+        const DropdownMenuItem(
+          value: '__add_new__',
+          child: Text('Add New Building'),
+        ),
+      ],
+      onChanged: (value) {
+        if (value == '__add_new__') {
+          setState(() {
+            _isManualBuilding = true;
+            _selectedBuilding = null;
+            _floors = [];
+            _selectedFloor = null;
+            _isManualFloor = false;
+          });
+        } else {
+          setState(() {
+            _selectedBuilding = value;
+            _buildingController.text = value ?? '';
+            _floors = [];
+            _selectedFloor = null;
+            _isManualFloor = false;
+          });
+          if (value != null) {
+            _fetchFloors(value);
+          }
+        }
+      },
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a building name';
+        if (value == null && !_isManualBuilding) {
+          return 'Please select a building';
         }
         return null;
       },
@@ -533,9 +736,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
           ),
           elevation: 0,
         ),
-        body: SingleChildScrollView(
-          child: _buildFormContent(constraints),
-        ),
+        body: SingleChildScrollView(child: _buildFormContent(constraints)),
       ),
     );
   }

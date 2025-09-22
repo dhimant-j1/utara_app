@@ -12,13 +12,15 @@ mixin _$FoodPassStore on _FoodPassStore, Store {
   Computed<bool>? _$isLoadingComputed;
 
   @override
-  bool get isLoading =>
-      (_$isLoadingComputed ??= Computed<bool>(() => super.isLoading,
-              name: '_FoodPassStore.isLoading'))
-          .value;
+  bool get isLoading => (_$isLoadingComputed ??= Computed<bool>(
+    () => super.isLoading,
+    name: '_FoodPassStore.isLoading',
+  )).value;
 
-  late final _$_scanFoodPassFutureAtom =
-      Atom(name: '_FoodPassStore._scanFoodPassFuture', context: context);
+  late final _$_scanFoodPassFutureAtom = Atom(
+    name: '_FoodPassStore._scanFoodPassFuture',
+    context: context,
+  );
 
   @override
   ObservableFuture<void>? get _scanFoodPassFuture {
@@ -33,8 +35,10 @@ mixin _$FoodPassStore on _FoodPassStore, Store {
     });
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_FoodPassStore.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_FoodPassStore.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -49,8 +53,10 @@ mixin _$FoodPassStore on _FoodPassStore, Store {
     });
   }
 
-  late final _$scannedPassAtom =
-      Atom(name: '_FoodPassStore.scannedPass', context: context);
+  late final _$scannedPassAtom = Atom(
+    name: '_FoodPassStore.scannedPass',
+    context: context,
+  );
 
   @override
   FoodPass? get scannedPass {
@@ -65,8 +71,10 @@ mixin _$FoodPassStore on _FoodPassStore, Store {
     });
   }
 
-  late final _$scanFoodPassAsyncAction =
-      AsyncAction('_FoodPassStore.scanFoodPass', context: context);
+  late final _$scanFoodPassAsyncAction = AsyncAction(
+    '_FoodPassStore.scanFoodPass',
+    context: context,
+  );
 
   @override
   Future<void> scanFoodPass(String passId) {

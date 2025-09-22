@@ -9,8 +9,19 @@ part of 'room_requests_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$RoomRequestsStore on _RoomRequestsStore, Store {
-  late final _$roomRequestsAtom =
-      Atom(name: '_RoomRequestsStore.roomRequests', context: context);
+  Computed<ObservableList<RoomRequest>>? _$filteredRequestsComputed;
+
+  @override
+  ObservableList<RoomRequest> get filteredRequests =>
+      (_$filteredRequestsComputed ??= Computed<ObservableList<RoomRequest>>(
+        () => super.filteredRequests,
+        name: '_RoomRequestsStore.filteredRequests',
+      )).value;
+
+  late final _$roomRequestsAtom = Atom(
+    name: '_RoomRequestsStore.roomRequests',
+    context: context,
+  );
 
   @override
   ObservableList<RoomRequest> get roomRequests {
@@ -25,8 +36,10 @@ mixin _$RoomRequestsStore on _RoomRequestsStore, Store {
     });
   }
 
-  late final _$isLoadingAtom =
-      Atom(name: '_RoomRequestsStore.isLoading', context: context);
+  late final _$isLoadingAtom = Atom(
+    name: '_RoomRequestsStore.isLoading',
+    context: context,
+  );
 
   @override
   bool get isLoading {
@@ -41,8 +54,10 @@ mixin _$RoomRequestsStore on _RoomRequestsStore, Store {
     });
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_RoomRequestsStore.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_RoomRequestsStore.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -57,22 +72,63 @@ mixin _$RoomRequestsStore on _RoomRequestsStore, Store {
     });
   }
 
-  late final _$fetchRoomRequestsAsyncAction =
-      AsyncAction('_RoomRequestsStore.fetchRoomRequests', context: context);
+  late final _$selectedFilterAtom = Atom(
+    name: '_RoomRequestsStore.selectedFilter',
+    context: context,
+  );
+
+  @override
+  String get selectedFilter {
+    _$selectedFilterAtom.reportRead();
+    return super.selectedFilter;
+  }
+
+  @override
+  set selectedFilter(String value) {
+    _$selectedFilterAtom.reportWrite(value, super.selectedFilter, () {
+      super.selectedFilter = value;
+    });
+  }
+
+  late final _$fetchRoomRequestsAsyncAction = AsyncAction(
+    '_RoomRequestsStore.fetchRoomRequests',
+    context: context,
+  );
 
   @override
   Future<void> fetchRoomRequests({String? status, String? userId}) {
-    return _$fetchRoomRequestsAsyncAction
-        .run(() => super.fetchRoomRequests(status: status, userId: userId));
+    return _$fetchRoomRequestsAsyncAction.run(
+      () => super.fetchRoomRequests(status: status, userId: userId),
+    );
   }
 
-  late final _$checkInCheckOutAsyncAction =
-      AsyncAction('_RoomRequestsStore.checkInCheckOut', context: context);
+  late final _$checkInCheckOutAsyncAction = AsyncAction(
+    '_RoomRequestsStore.checkInCheckOut',
+    context: context,
+  );
 
   @override
   Future<void> checkInCheckOut({RoomRequest? req}) {
-    return _$checkInCheckOutAsyncAction
-        .run(() => super.checkInCheckOut(req: req));
+    return _$checkInCheckOutAsyncAction.run(
+      () => super.checkInCheckOut(req: req),
+    );
+  }
+
+  late final _$_RoomRequestsStoreActionController = ActionController(
+    name: '_RoomRequestsStore',
+    context: context,
+  );
+
+  @override
+  void setFilter(String filter) {
+    final _$actionInfo = _$_RoomRequestsStoreActionController.startAction(
+      name: '_RoomRequestsStore.setFilter',
+    );
+    try {
+      return super.setFilter(filter);
+    } finally {
+      _$_RoomRequestsStoreActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
@@ -80,7 +136,9 @@ mixin _$RoomRequestsStore on _RoomRequestsStore, Store {
     return '''
 roomRequests: ${roomRequests},
 isLoading: ${isLoading},
-errorMessage: ${errorMessage}
+errorMessage: ${errorMessage},
+selectedFilter: ${selectedFilter},
+filteredRequests: ${filteredRequests}
     ''';
   }
 }

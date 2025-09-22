@@ -12,20 +12,23 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
   Computed<bool>? _$hasCategoriesComputed;
 
   @override
-  bool get hasCategories =>
-      (_$hasCategoriesComputed ??= Computed<bool>(() => super.hasCategories,
-              name: '_FoodPassCategoryStore.hasCategories'))
-          .value;
+  bool get hasCategories => (_$hasCategoriesComputed ??= Computed<bool>(
+    () => super.hasCategories,
+    name: '_FoodPassCategoryStore.hasCategories',
+  )).value;
   Computed<bool>? _$isPerformingActionComputed;
 
   @override
-  bool get isPerformingAction => (_$isPerformingActionComputed ??=
-          Computed<bool>(() => super.isPerformingAction,
-              name: '_FoodPassCategoryStore.isPerformingAction'))
-      .value;
+  bool get isPerformingAction =>
+      (_$isPerformingActionComputed ??= Computed<bool>(
+        () => super.isPerformingAction,
+        name: '_FoodPassCategoryStore.isPerformingAction',
+      )).value;
 
-  late final _$isLoadingAtom =
-      Atom(name: '_FoodPassCategoryStore.isLoading', context: context);
+  late final _$isLoadingAtom = Atom(
+    name: '_FoodPassCategoryStore.isLoading',
+    context: context,
+  );
 
   @override
   bool get isLoading {
@@ -40,8 +43,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$isCreatingAtom =
-      Atom(name: '_FoodPassCategoryStore.isCreating', context: context);
+  late final _$isCreatingAtom = Atom(
+    name: '_FoodPassCategoryStore.isCreating',
+    context: context,
+  );
 
   @override
   bool get isCreating {
@@ -56,8 +61,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$isUpdatingAtom =
-      Atom(name: '_FoodPassCategoryStore.isUpdating', context: context);
+  late final _$isUpdatingAtom = Atom(
+    name: '_FoodPassCategoryStore.isUpdating',
+    context: context,
+  );
 
   @override
   bool get isUpdating {
@@ -72,8 +79,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$isDeletingAtom =
-      Atom(name: '_FoodPassCategoryStore.isDeleting', context: context);
+  late final _$isDeletingAtom = Atom(
+    name: '_FoodPassCategoryStore.isDeleting',
+    context: context,
+  );
 
   @override
   bool get isDeleting {
@@ -88,8 +97,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_FoodPassCategoryStore.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_FoodPassCategoryStore.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -104,8 +115,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$successMessageAtom =
-      Atom(name: '_FoodPassCategoryStore.successMessage', context: context);
+  late final _$successMessageAtom = Atom(
+    name: '_FoodPassCategoryStore.successMessage',
+    context: context,
+  );
 
   @override
   String? get successMessage {
@@ -120,8 +133,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$categoriesAtom =
-      Atom(name: '_FoodPassCategoryStore.categories', context: context);
+  late final _$categoriesAtom = Atom(
+    name: '_FoodPassCategoryStore.categories',
+    context: context,
+  );
 
   @override
   ObservableList<FoodPassCategory> get categories {
@@ -136,8 +151,10 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$selectedCategoryAtom =
-      Atom(name: '_FoodPassCategoryStore.selectedCategory', context: context);
+  late final _$selectedCategoryAtom = Atom(
+    name: '_FoodPassCategoryStore.selectedCategory',
+    context: context,
+  );
 
   @override
   FoodPassCategory? get selectedCategory {
@@ -152,51 +169,74 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
     });
   }
 
-  late final _$fetchCategoriesAsyncAction =
-      AsyncAction('_FoodPassCategoryStore.fetchCategories', context: context);
+  late final _$fetchCategoriesAsyncAction = AsyncAction(
+    '_FoodPassCategoryStore.fetchCategories',
+    context: context,
+  );
 
   @override
   Future<void> fetchCategories() {
     return _$fetchCategoriesAsyncAction.run(() => super.fetchCategories());
   }
 
-  late final _$createCategoryAsyncAction =
-      AsyncAction('_FoodPassCategoryStore.createCategory', context: context);
+  late final _$createCategoryAsyncAction = AsyncAction(
+    '_FoodPassCategoryStore.createCategory',
+    context: context,
+  );
 
   @override
-  Future<void> createCategory(
-      {required String buildingName, required String colorCode}) {
-    return _$createCategoryAsyncAction.run(() =>
-        super.createCategory(buildingName: buildingName, colorCode: colorCode));
+  Future<void> createCategory({
+    required String buildingName,
+    required String colorCode,
+  }) {
+    return _$createCategoryAsyncAction.run(
+      () => super.createCategory(
+        buildingName: buildingName,
+        colorCode: colorCode,
+      ),
+    );
   }
 
-  late final _$updateCategoryAsyncAction =
-      AsyncAction('_FoodPassCategoryStore.updateCategory', context: context);
+  late final _$updateCategoryAsyncAction = AsyncAction(
+    '_FoodPassCategoryStore.updateCategory',
+    context: context,
+  );
 
   @override
-  Future<void> updateCategory(
-      {required String id,
-      required String buildingName,
-      required String colorCode}) {
-    return _$updateCategoryAsyncAction.run(() => super.updateCategory(
-        id: id, buildingName: buildingName, colorCode: colorCode));
+  Future<void> updateCategory({
+    required String id,
+    required String buildingName,
+    required String colorCode,
+  }) {
+    return _$updateCategoryAsyncAction.run(
+      () => super.updateCategory(
+        id: id,
+        buildingName: buildingName,
+        colorCode: colorCode,
+      ),
+    );
   }
 
-  late final _$deleteCategoryAsyncAction =
-      AsyncAction('_FoodPassCategoryStore.deleteCategory', context: context);
+  late final _$deleteCategoryAsyncAction = AsyncAction(
+    '_FoodPassCategoryStore.deleteCategory',
+    context: context,
+  );
 
   @override
   Future<void> deleteCategory(String id) {
     return _$deleteCategoryAsyncAction.run(() => super.deleteCategory(id));
   }
 
-  late final _$_FoodPassCategoryStoreActionController =
-      ActionController(name: '_FoodPassCategoryStore', context: context);
+  late final _$_FoodPassCategoryStoreActionController = ActionController(
+    name: '_FoodPassCategoryStore',
+    context: context,
+  );
 
   @override
   void clearMessages() {
     final _$actionInfo = _$_FoodPassCategoryStoreActionController.startAction(
-        name: '_FoodPassCategoryStore.clearMessages');
+      name: '_FoodPassCategoryStore.clearMessages',
+    );
     try {
       return super.clearMessages();
     } finally {
@@ -207,7 +247,8 @@ mixin _$FoodPassCategoryStore on _FoodPassCategoryStore, Store {
   @override
   void setSelectedCategory(FoodPassCategory? category) {
     final _$actionInfo = _$_FoodPassCategoryStoreActionController.startAction(
-        name: '_FoodPassCategoryStore.setSelectedCategory');
+      name: '_FoodPassCategoryStore.setSelectedCategory',
+    );
     try {
       return super.setSelectedCategory(category);
     } finally {

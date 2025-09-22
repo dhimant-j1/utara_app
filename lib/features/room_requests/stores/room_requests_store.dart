@@ -20,13 +20,28 @@ abstract class _RoomRequestsStore with Store {
   @observable
   String? errorMessage;
 
+  @observable
+  String selectedFilter = 'all';
+
+  @computed
+  ObservableList<RoomRequest> get filteredRequests {
+    if (selectedFilter == 'all') return roomRequests;
+    return ObservableList.of(
+      roomRequests.where(
+        (req) => req.status.name.toLowerCase() == selectedFilter.toLowerCase(),
+      ),
+    );
+  }
+
   @action
   Future<void> fetchRoomRequests({String? status, String? userId}) async {
     isLoading = true;
     errorMessage = null;
     try {
-      final requests =
-          await repository.fetchRoomRequests(status: status, userId: userId);
+      final requests = await repository.fetchRoomRequests(
+        status: status,
+        userId: userId,
+      );
       roomRequests = ObservableList.of(requests);
     } catch (e) {
       errorMessage = e.toString();
@@ -52,5 +67,10 @@ abstract class _RoomRequestsStore with Store {
     } finally {
       isLoading = false;
     }
+  }
+
+  @action
+  void setFilter(String filter) {
+    selectedFilter = filter;
   }
 }

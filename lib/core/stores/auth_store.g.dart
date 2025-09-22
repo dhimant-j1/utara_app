@@ -12,46 +12,52 @@ mixin _$AuthStore on _AuthStoreBase, Store {
   Computed<bool>? _$isAuthenticatedComputed;
 
   @override
-  bool get isAuthenticated =>
-      (_$isAuthenticatedComputed ??= Computed<bool>(() => super.isAuthenticated,
-              name: '_AuthStoreBase.isAuthenticated'))
-          .value;
+  bool get isAuthenticated => (_$isAuthenticatedComputed ??= Computed<bool>(
+    () => super.isAuthenticated,
+    name: '_AuthStoreBase.isAuthenticated',
+  )).value;
   Computed<bool>? _$isAdminComputed;
 
   @override
-  bool get isAdmin => (_$isAdminComputed ??=
-          Computed<bool>(() => super.isAdmin, name: '_AuthStoreBase.isAdmin'))
-      .value;
+  bool get isAdmin => (_$isAdminComputed ??= Computed<bool>(
+    () => super.isAdmin,
+    name: '_AuthStoreBase.isAdmin',
+  )).value;
   Computed<bool>? _$isStaffComputed;
 
   @override
-  bool get isStaff => (_$isStaffComputed ??=
-          Computed<bool>(() => super.isStaff, name: '_AuthStoreBase.isStaff'))
-      .value;
+  bool get isStaff => (_$isStaffComputed ??= Computed<bool>(
+    () => super.isStaff,
+    name: '_AuthStoreBase.isStaff',
+  )).value;
   Computed<bool>? _$canManageRoomsComputed;
 
   @override
-  bool get canManageRooms =>
-      (_$canManageRoomsComputed ??= Computed<bool>(() => super.canManageRooms,
-              name: '_AuthStoreBase.canManageRooms'))
-          .value;
+  bool get canManageRooms => (_$canManageRoomsComputed ??= Computed<bool>(
+    () => super.canManageRooms,
+    name: '_AuthStoreBase.canManageRooms',
+  )).value;
   Computed<bool>? _$canManageFoodPassesComputed;
 
   @override
-  bool get canManageFoodPasses => (_$canManageFoodPassesComputed ??=
-          Computed<bool>(() => super.canManageFoodPasses,
-              name: '_AuthStoreBase.canManageFoodPasses'))
-      .value;
+  bool get canManageFoodPasses =>
+      (_$canManageFoodPassesComputed ??= Computed<bool>(
+        () => super.canManageFoodPasses,
+        name: '_AuthStoreBase.canManageFoodPasses',
+      )).value;
   Computed<bool>? _$canProcessRequestsComputed;
 
   @override
-  bool get canProcessRequests => (_$canProcessRequestsComputed ??=
-          Computed<bool>(() => super.canProcessRequests,
-              name: '_AuthStoreBase.canProcessRequests'))
-      .value;
+  bool get canProcessRequests =>
+      (_$canProcessRequestsComputed ??= Computed<bool>(
+        () => super.canProcessRequests,
+        name: '_AuthStoreBase.canProcessRequests',
+      )).value;
 
-  late final _$currentUserAtom =
-      Atom(name: '_AuthStoreBase.currentUser', context: context);
+  late final _$currentUserAtom = Atom(
+    name: '_AuthStoreBase.currentUser',
+    context: context,
+  );
 
   @override
   User? get currentUser {
@@ -81,8 +87,10 @@ mixin _$AuthStore on _AuthStoreBase, Store {
     });
   }
 
-  late final _$isLoadingAtom =
-      Atom(name: '_AuthStoreBase.isLoading', context: context);
+  late final _$isLoadingAtom = Atom(
+    name: '_AuthStoreBase.isLoading',
+    context: context,
+  );
 
   @override
   bool get isLoading {
@@ -97,8 +105,10 @@ mixin _$AuthStore on _AuthStoreBase, Store {
     });
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_AuthStoreBase.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_AuthStoreBase.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -113,64 +123,82 @@ mixin _$AuthStore on _AuthStoreBase, Store {
     });
   }
 
-  late final _$_loadStoredAuthAsyncAction =
-      AsyncAction('_AuthStoreBase._loadStoredAuth', context: context);
+  late final _$_loadStoredAuthAsyncAction = AsyncAction(
+    '_AuthStoreBase._loadStoredAuth',
+    context: context,
+  );
 
   @override
   Future<void> _loadStoredAuth() {
     return _$_loadStoredAuthAsyncAction.run(() => super._loadStoredAuth());
   }
 
-  late final _$_saveUserToStorageAsyncAction =
-      AsyncAction('_AuthStoreBase._saveUserToStorage', context: context);
+  late final _$_saveUserToStorageAsyncAction = AsyncAction(
+    '_AuthStoreBase._saveUserToStorage',
+    context: context,
+  );
 
   @override
   Future<void> _saveUserToStorage(User user) {
-    return _$_saveUserToStorageAsyncAction
-        .run(() => super._saveUserToStorage(user));
+    return _$_saveUserToStorageAsyncAction.run(
+      () => super._saveUserToStorage(user),
+    );
   }
 
-  late final _$loginAsyncAction =
-      AsyncAction('_AuthStoreBase.login', context: context);
+  late final _$loginAsyncAction = AsyncAction(
+    '_AuthStoreBase.login',
+    context: context,
+  );
 
   @override
   Future<bool> login(String email, String password) {
     return _$loginAsyncAction.run(() => super.login(email, password));
   }
 
-  late final _$signupAsyncAction =
-      AsyncAction('_AuthStoreBase.signup', context: context);
+  late final _$signupAsyncAction = AsyncAction(
+    '_AuthStoreBase.signup',
+    context: context,
+  );
 
   @override
-  Future<bool> signup(
-      {required String email,
-      required String password,
-      required String name,
-      required String phoneNumber,
-      String? role}) {
-    return _$signupAsyncAction.run(() => super.signup(
+  Future<bool> signup({
+    required String email,
+    required String password,
+    required String name,
+    required String phoneNumber,
+    String? role,
+  }) {
+    return _$signupAsyncAction.run(
+      () => super.signup(
         email: email,
         password: password,
         name: name,
         phoneNumber: phoneNumber,
-        role: role));
+        role: role,
+      ),
+    );
   }
 
-  late final _$logoutAsyncAction =
-      AsyncAction('_AuthStoreBase.logout', context: context);
+  late final _$logoutAsyncAction = AsyncAction(
+    '_AuthStoreBase.logout',
+    context: context,
+  );
 
   @override
   Future<void> logout() {
     return _$logoutAsyncAction.run(() => super.logout());
   }
 
-  late final _$_AuthStoreBaseActionController =
-      ActionController(name: '_AuthStoreBase', context: context);
+  late final _$_AuthStoreBaseActionController = ActionController(
+    name: '_AuthStoreBase',
+    context: context,
+  );
 
   @override
   User? _loadUserFromStorage() {
     final _$actionInfo = _$_AuthStoreBaseActionController.startAction(
-        name: '_AuthStoreBase._loadUserFromStorage');
+      name: '_AuthStoreBase._loadUserFromStorage',
+    );
     try {
       return super._loadUserFromStorage();
     } finally {
@@ -181,7 +209,8 @@ mixin _$AuthStore on _AuthStoreBase, Store {
   @override
   void clearError() {
     final _$actionInfo = _$_AuthStoreBaseActionController.startAction(
-        name: '_AuthStoreBase.clearError');
+      name: '_AuthStoreBase.clearError',
+    );
     try {
       return super.clearError();
     } finally {

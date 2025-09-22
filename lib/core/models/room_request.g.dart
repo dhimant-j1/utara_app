@@ -7,34 +7,35 @@ part of 'room_request.dart';
 // **************************************************************************
 
 RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
-      place: json['place'] as String,
-      purpose: json['purpose'] as String,
-      id: json['id'] as String,
-      name: json['name'] as String,
-      userId: json['user_id'] as String,
-      checkInDate: DateTime.parse(json['check_in_date'] as String),
-      checkOutDate: DateTime.parse(json['check_out_date'] as String),
-      numberOfPeople: PeopleCount.fromJson(
-          json['number_of_people'] as Map<String, dynamic>),
-      specialRequests: json['special_requests'] as String,
-      status: $enumDecode(_$RequestStatusEnumMap, json['status']),
-      processedBy: json['processed_by'] as String?,
-      processedAt: json['processed_at'] == null
-          ? null
-          : DateTime.parse(json['processed_at'] as String),
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      user: json['user'] == null
-          ? null
-          : UserInformation.fromJson(json['user'] as Map<String, dynamic>),
-      room: json['room'] == null
-          ? null
-          : Room.fromJson(json['room'] as Map<String, dynamic>),
-      assignment: json['assignment'] == null
-          ? null
-          : RoomAssignment.fromJson(json['assignment'] as Map<String, dynamic>),
-      reference: json['reference'] as String?,
-    );
+  place: json['place'] as String,
+  purpose: json['purpose'] as String,
+  id: json['id'] as String,
+  name: json['name'] as String,
+  userId: json['user_id'] as String,
+  checkInDate: DateTime.parse(json['check_in_date'] as String),
+  checkOutDate: DateTime.parse(json['check_out_date'] as String),
+  numberOfPeople: PeopleCount.fromJson(
+    json['number_of_people'] as Map<String, dynamic>,
+  ),
+  specialRequests: json['special_requests'] as String,
+  status: $enumDecode(_$RequestStatusEnumMap, json['status']),
+  processedBy: json['processed_by'] as String?,
+  processedAt: json['processed_at'] == null
+      ? null
+      : DateTime.parse(json['processed_at'] as String),
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+  user: json['user'] == null
+      ? null
+      : UserInformation.fromJson(json['user'] as Map<String, dynamic>),
+  room: json['room'] == null
+      ? null
+      : Room.fromJson(json['room'] as Map<String, dynamic>),
+  assignment: json['assignment'] == null
+      ? null
+      : RoomAssignment.fromJson(json['assignment'] as Map<String, dynamic>),
+  reference: json['reference'] as String?,
+);
 
 Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
     <String, dynamic>{

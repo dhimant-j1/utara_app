@@ -9,8 +9,10 @@ part of 'user_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$UserStore on _UserStoreBase, Store {
-  late final _$isLoadingAtom =
-      Atom(name: '_UserStoreBase.isLoading', context: context);
+  late final _$isLoadingAtom = Atom(
+    name: '_UserStoreBase.isLoading',
+    context: context,
+  );
 
   @override
   bool get isLoading {
@@ -25,8 +27,10 @@ mixin _$UserStore on _UserStoreBase, Store {
     });
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_UserStoreBase.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_UserStoreBase.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -41,8 +45,10 @@ mixin _$UserStore on _UserStoreBase, Store {
     });
   }
 
-  late final _$userListAtom =
-      Atom(name: '_UserStoreBase.userList', context: context);
+  late final _$userListAtom = Atom(
+    name: '_UserStoreBase.userList',
+    context: context,
+  );
 
   @override
   List<ManangeUser> get userList {
@@ -57,68 +63,88 @@ mixin _$UserStore on _UserStoreBase, Store {
     });
   }
 
-  late final _$createUserAsyncAction =
-      AsyncAction('_UserStoreBase.createUser', context: context);
+  late final _$createUserAsyncAction = AsyncAction(
+    '_UserStoreBase.createUser',
+    context: context,
+  );
 
   @override
-  Future<bool> createUser(
-      {required String email,
-      required String password,
-      required String name,
-      required String phoneNumber,
-      required String role}) {
-    return _$createUserAsyncAction.run(() => super.createUser(
+  Future<bool> createUser({
+    required String email,
+    required String password,
+    required String name,
+    required String phoneNumber,
+    required String role,
+  }) {
+    return _$createUserAsyncAction.run(
+      () => super.createUser(
         email: email,
         password: password,
         name: name,
         phoneNumber: phoneNumber,
-        role: role));
+        role: role,
+      ),
+    );
   }
 
-  late final _$getUsersListAsyncAction =
-      AsyncAction('_UserStoreBase.getUsersList', context: context);
+  late final _$getUsersListAsyncAction = AsyncAction(
+    '_UserStoreBase.getUsersList',
+    context: context,
+  );
 
   @override
   Future<List<Map<String, dynamic>>> getUsersList() {
     return _$getUsersListAsyncAction.run(() => super.getUsersList());
   }
 
-  late final _$deleteUserAsyncAction =
-      AsyncAction('_UserStoreBase.deleteUser', context: context);
+  late final _$deleteUserAsyncAction = AsyncAction(
+    '_UserStoreBase.deleteUser',
+    context: context,
+  );
 
   @override
   Future<bool> deleteUser({required String userId, required int index}) {
-    return _$deleteUserAsyncAction
-        .run(() => super.deleteUser(userId: userId, index: index));
+    return _$deleteUserAsyncAction.run(
+      () => super.deleteUser(userId: userId, index: index),
+    );
   }
 
-  late final _$updateUserAsyncAction =
-      AsyncAction('_UserStoreBase.updateUser', context: context);
+  late final _$updateUserAsyncAction = AsyncAction(
+    '_UserStoreBase.updateUser',
+    context: context,
+  );
 
   @override
-  Future<bool> updateUser(
-      {required String email,
-      required String password,
-      required String name,
-      required String phoneNumber,
-      required String role,
-      required String userId}) {
-    return _$updateUserAsyncAction.run(() => super.updateUser(
+  Future<bool> updateUser({
+    required String email,
+    required String password,
+    required String name,
+    required String phoneNumber,
+    required String role,
+    required String userId,
+  }) {
+    return _$updateUserAsyncAction.run(
+      () => super.updateUser(
         email: email,
         password: password,
         name: name,
         phoneNumber: phoneNumber,
         role: role,
-        userId: userId));
+        userId: userId,
+      ),
+    );
   }
 
-  late final _$_UserStoreBaseActionController =
-      ActionController(name: '_UserStoreBase', context: context);
+  late final _$_UserStoreBaseActionController = ActionController(
+    name: '_UserStoreBase',
+    context: context,
+  );
 
   @override
   void clearError() {
     final _$actionInfo = _$_UserStoreBaseActionController.startAction(
-        name: '_UserStoreBase.clearError');
+      name: '_UserStoreBase.clearError',
+    );
     try {
       return super.clearError();
     } finally {

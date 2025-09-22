@@ -9,8 +9,10 @@ part of 'process_room_request_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
-  late final _$isProcessingAtom =
-      Atom(name: '_ProcessRoomRequestStore.isProcessing', context: context);
+  late final _$isProcessingAtom = Atom(
+    name: '_ProcessRoomRequestStore.isProcessing',
+    context: context,
+  );
 
   @override
   bool get isProcessing {
@@ -25,8 +27,10 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
-  late final _$isLoadingRoomsAtom =
-      Atom(name: '_ProcessRoomRequestStore.isLoadingRooms', context: context);
+  late final _$isLoadingRoomsAtom = Atom(
+    name: '_ProcessRoomRequestStore.isLoadingRooms',
+    context: context,
+  );
 
   @override
   bool get isLoadingRooms {
@@ -42,8 +46,9 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
   }
 
   late final _$isGeneratingFoodPassesAtom = Atom(
-      name: '_ProcessRoomRequestStore.isGeneratingFoodPasses',
-      context: context);
+    name: '_ProcessRoomRequestStore.isGeneratingFoodPasses',
+    context: context,
+  );
 
   @override
   bool get isGeneratingFoodPasses {
@@ -53,14 +58,19 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
 
   @override
   set isGeneratingFoodPasses(bool value) {
-    _$isGeneratingFoodPassesAtom
-        .reportWrite(value, super.isGeneratingFoodPasses, () {
-      super.isGeneratingFoodPasses = value;
-    });
+    _$isGeneratingFoodPassesAtom.reportWrite(
+      value,
+      super.isGeneratingFoodPasses,
+      () {
+        super.isGeneratingFoodPasses = value;
+      },
+    );
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_ProcessRoomRequestStore.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_ProcessRoomRequestStore.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -75,8 +85,10 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
-  late final _$foodPassMessageAtom =
-      Atom(name: '_ProcessRoomRequestStore.foodPassMessage', context: context);
+  late final _$foodPassMessageAtom = Atom(
+    name: '_ProcessRoomRequestStore.foodPassMessage',
+    context: context,
+  );
 
   @override
   String? get foodPassMessage {
@@ -91,8 +103,10 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
-  late final _$processedRequestAtom =
-      Atom(name: '_ProcessRoomRequestStore.processedRequest', context: context);
+  late final _$processedRequestAtom = Atom(
+    name: '_ProcessRoomRequestStore.processedRequest',
+    context: context,
+  );
 
   @override
   RoomRequest? get processedRequest {
@@ -107,8 +121,10 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
-  late final _$availableRoomsAtom =
-      Atom(name: '_ProcessRoomRequestStore.availableRooms', context: context);
+  late final _$availableRoomsAtom = Atom(
+    name: '_ProcessRoomRequestStore.availableRooms',
+    context: context,
+  );
 
   @override
   ObservableList<Room> get availableRooms {
@@ -123,8 +139,10 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
-  late final _$selectedRoomAtom =
-      Atom(name: '_ProcessRoomRequestStore.selectedRoom', context: context);
+  late final _$selectedRoomAtom = Atom(
+    name: '_ProcessRoomRequestStore.selectedRoom',
+    context: context,
+  );
 
   @override
   Room? get selectedRoom {
@@ -140,33 +158,47 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
   }
 
   late final _$fetchAvailableRoomsAsyncAction = AsyncAction(
-      '_ProcessRoomRequestStore.fetchAvailableRooms',
-      context: context);
+    '_ProcessRoomRequestStore.fetchAvailableRooms',
+    context: context,
+  );
 
   @override
   Future<void> fetchAvailableRooms(String preferredType) {
-    return _$fetchAvailableRoomsAsyncAction
-        .run(() => super.fetchAvailableRooms(preferredType));
+    return _$fetchAvailableRoomsAsyncAction.run(
+      () => super.fetchAvailableRooms(preferredType),
+    );
   }
 
   late final _$processRoomRequestAsyncAction = AsyncAction(
-      '_ProcessRoomRequestStore.processRoomRequest',
-      context: context);
+    '_ProcessRoomRequestStore.processRoomRequest',
+    context: context,
+  );
 
   @override
-  Future<void> processRoomRequest(
-      {required String requestId, required String status, String? roomId}) {
-    return _$processRoomRequestAsyncAction.run(() => super.processRoomRequest(
-        requestId: requestId, status: status, roomId: roomId));
+  Future<void> processRoomRequest({
+    required String requestId,
+    required String status,
+    String? roomId,
+  }) {
+    return _$processRoomRequestAsyncAction.run(
+      () => super.processRoomRequest(
+        requestId: requestId,
+        status: status,
+        roomId: roomId,
+      ),
+    );
   }
 
-  late final _$_ProcessRoomRequestStoreActionController =
-      ActionController(name: '_ProcessRoomRequestStore', context: context);
+  late final _$_ProcessRoomRequestStoreActionController = ActionController(
+    name: '_ProcessRoomRequestStore',
+    context: context,
+  );
 
   @override
   void selectRoom(Room room) {
     final _$actionInfo = _$_ProcessRoomRequestStoreActionController.startAction(
-        name: '_ProcessRoomRequestStore.selectRoom');
+      name: '_ProcessRoomRequestStore.selectRoom',
+    );
     try {
       return super.selectRoom(room);
     } finally {

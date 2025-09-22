@@ -12,13 +12,16 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
   Computed<ObservableList<FoodPass>>? _$foodPassesComputed;
 
   @override
-  ObservableList<FoodPass> get foodPasses => (_$foodPassesComputed ??=
-          Computed<ObservableList<FoodPass>>(() => super.foodPasses,
-              name: '_FoodPassesStore.foodPasses'))
-      .value;
+  ObservableList<FoodPass> get foodPasses =>
+      (_$foodPassesComputed ??= Computed<ObservableList<FoodPass>>(
+        () => super.foodPasses,
+        name: '_FoodPassesStore.foodPasses',
+      )).value;
 
-  late final _$isLoadingAtom =
-      Atom(name: '_FoodPassesStore.isLoading', context: context);
+  late final _$isLoadingAtom = Atom(
+    name: '_FoodPassesStore.isLoading',
+    context: context,
+  );
 
   @override
   bool get isLoading {
@@ -33,8 +36,10 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     });
   }
 
-  late final _$errorMessageAtom =
-      Atom(name: '_FoodPassesStore.errorMessage', context: context);
+  late final _$errorMessageAtom = Atom(
+    name: '_FoodPassesStore.errorMessage',
+    context: context,
+  );
 
   @override
   String? get errorMessage {
@@ -49,8 +54,10 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     });
   }
 
-  late final _$allFoodPassesAtom =
-      Atom(name: '_FoodPassesStore.allFoodPasses', context: context);
+  late final _$allFoodPassesAtom = Atom(
+    name: '_FoodPassesStore.allFoodPasses',
+    context: context,
+  );
 
   @override
   ObservableList<FoodPass> get allFoodPasses {
@@ -65,8 +72,10 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     });
   }
 
-  late final _$selectedDateAtom =
-      Atom(name: '_FoodPassesStore.selectedDate', context: context);
+  late final _$selectedDateAtom = Atom(
+    name: '_FoodPassesStore.selectedDate',
+    context: context,
+  );
 
   @override
   DateTime? get selectedDate {
@@ -81,8 +90,10 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     });
   }
 
-  late final _$showUsedOnlyAtom =
-      Atom(name: '_FoodPassesStore.showUsedOnly', context: context);
+  late final _$showUsedOnlyAtom = Atom(
+    name: '_FoodPassesStore.showUsedOnly',
+    context: context,
+  );
 
   @override
   bool? get showUsedOnly {
@@ -97,22 +108,28 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
     });
   }
 
-  late final _$fetchFoodPassesAsyncAction =
-      AsyncAction('_FoodPassesStore.fetchFoodPasses', context: context);
+  late final _$fetchFoodPassesAsyncAction = AsyncAction(
+    '_FoodPassesStore.fetchFoodPasses',
+    context: context,
+  );
 
   @override
   Future<void> fetchFoodPasses([String? userId]) {
-    return _$fetchFoodPassesAsyncAction
-        .run(() => super.fetchFoodPasses(userId));
+    return _$fetchFoodPassesAsyncAction.run(
+      () => super.fetchFoodPasses(userId),
+    );
   }
 
-  late final _$_FoodPassesStoreActionController =
-      ActionController(name: '_FoodPassesStore', context: context);
+  late final _$_FoodPassesStoreActionController = ActionController(
+    name: '_FoodPassesStore',
+    context: context,
+  );
 
   @override
   void setSelectedDate(DateTime? date) {
     final _$actionInfo = _$_FoodPassesStoreActionController.startAction(
-        name: '_FoodPassesStore.setSelectedDate');
+      name: '_FoodPassesStore.setSelectedDate',
+    );
     try {
       return super.setSelectedDate(date);
     } finally {
@@ -123,7 +140,8 @@ mixin _$FoodPassesStore on _FoodPassesStore, Store {
   @override
   void setShowUsedOnly(bool? value) {
     final _$actionInfo = _$_FoodPassesStoreActionController.startAction(
-        name: '_FoodPassesStore.setShowUsedOnly');
+      name: '_FoodPassesStore.setShowUsedOnly',
+    );
     try {
       return super.setShowUsedOnly(value);
     } finally {
