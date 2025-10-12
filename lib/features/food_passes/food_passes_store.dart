@@ -28,23 +28,31 @@ abstract class _FoodPassesStore with Store {
 
   @computed
   ObservableList<FoodPass> get foodPasses {
-    return ObservableList.of(allFoodPasses.where((pass) {
-      // Filter by date if selected
-      if (selectedDate != null) {
-        final passDate =
-            DateTime(pass.date.year, pass.date.month, pass.date.day);
-        final filterDate = DateTime(
-            selectedDate!.year, selectedDate!.month, selectedDate!.day);
-        if (passDate != filterDate) return false;
-      }
+    return ObservableList.of(
+      allFoodPasses.where((pass) {
+        // Filter by date if selected
+        if (selectedDate != null) {
+          final passDate = DateTime(
+            pass.date.year,
+            pass.date.month,
+            pass.date.day,
+          );
+          final filterDate = DateTime(
+            selectedDate!.year,
+            selectedDate!.month,
+            selectedDate!.day,
+          );
+          if (passDate != filterDate) return false;
+        }
 
-      // Filter by used status if selected
-      if (showUsedOnly != null) {
-        if (pass.isUsed != showUsedOnly) return false;
-      }
+        // Filter by used status if selected
+        if (showUsedOnly != null) {
+          if (pass.isUsed != showUsedOnly) return false;
+        }
 
-      return true;
-    }).toList());
+        return true;
+      }).toList(),
+    );
   }
 
   @action

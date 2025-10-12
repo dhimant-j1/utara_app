@@ -1,9 +1,11 @@
 import 'package:mobx/mobx.dart';
 import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
 import 'package:utara_app/features/rooms/repository/rooms_repository.dart';
+import 'package:utara_app/features/rooms/repository/room_repository.dart';
 import 'package:utara_app/features/food_passes/repository/food_pass_repository.dart';
 import 'package:utara_app/core/models/room_request.dart';
 import 'package:utara_app/core/models/room.dart';
+import 'package:utara_app/core/di/service_locator.dart';
 
 part 'process_room_request_store.g.dart';
 
@@ -13,10 +15,12 @@ class ProcessRoomRequestStore = _ProcessRoomRequestStore
 abstract class _ProcessRoomRequestStore with Store {
   final RoomRequestRepository repository;
   final RoomsRepository roomsRepository;
+  final RoomRepository roomRepository;
   final FoodPassRepository foodPassRepository;
 
   _ProcessRoomRequestStore(this.repository)
     : roomsRepository = RoomsRepository(),
+      roomRepository = getIt<RoomRepository>(),
       foodPassRepository = FoodPassRepository();
 
   @observable
@@ -43,13 +47,78 @@ abstract class _ProcessRoomRequestStore with Store {
   @observable
   Room? selectedRoom;
 
+  @observable
+  String? selectedBuilding;
+
+  @observable
+  int? selectedFloor;
+
+  @observable
+  ObservableList<String> buildings = ObservableList<String>();
+
+  @observable
+  ObservableList<int> floors = ObservableList<int>();
+
+  @observable
+  bool isLoadingBuildings = false;
+
+  @observable
+  bool isLoadingFloors = false;
+
+  @action
+  Future<void> fetchBuildings() async {
+    isLoadingBuildings = true;
+    try {
+      final response = await roomRepository.getBuildings();
+      buildings = ObservableList.of(
+        List<String>.from(response['buildings'] ?? []),
+      );
+    } catch (e) {
+      errorMessage = 'Failed to load buildings: $e';
+    } finally {
+      isLoadingBuildings = false;
+    }
+  }
+
+  @action
+  Future<void> fetchFloors(String building) async {
+    isLoadingFloors = true;
+    try {
+      final response = await roomRepository.getFloors(building);
+      floors = ObservableList.of(List<int>.from(response['floors'] ?? []));
+    } catch (e) {
+      errorMessage = 'Failed to load floors: $e';
+    } finally {
+      isLoadingFloors = false;
+    }
+  }
+
+  @action
+  void setBuilding(String? building) {
+    selectedBuilding = building;
+    selectedFloor = null;
+    floors.clear();
+    if (building != null) {
+      fetchFloors(building);
+    }
+    fetchAvailableRooms('STANDARD');
+  }
+
+  @action
+  void setFloor(int? floor) {
+    selectedFloor = floor;
+    fetchAvailableRooms('STANDARD');
+  }
+
   @action
   Future<void> fetchAvailableRooms(String preferredType) async {
     isLoadingRooms = true;
     errorMessage = null;
     try {
       final rooms = await roomsRepository.fetchAvailableRooms(
-        type: preferredType,
+        // type: preferredType,
+        building: selectedBuilding,
+        floor: selectedFloor,
       );
       availableRooms = ObservableList.of(rooms);
     } catch (e) {

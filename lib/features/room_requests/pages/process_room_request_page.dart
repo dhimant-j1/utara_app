@@ -16,9 +16,9 @@ class ProcessRoomRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<ProcessRoomRequestStore>(
-      create: (_) =>
-          ProcessRoomRequestStore(RoomRequestRepository(getIt()))
-            ..fetchAvailableRooms('STANDARD'),
+      create: (_) => ProcessRoomRequestStore(RoomRequestRepository(getIt()))
+        ..fetchBuildings()
+        ..fetchAvailableRooms('STANDARD'),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Process Room Request'),
@@ -35,7 +35,6 @@ class ProcessRoomRequestPage extends StatelessWidget {
                 final roomRequestRepository = RoomRequestsStore(
                   RoomRequestRepository(getIt()),
                 );
-                final isNarrow = constraints.maxWidth < 600;
 
                 return Center(
                   child: SingleChildScrollView(
@@ -60,6 +59,85 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                   if (!store.isProcessing &&
                                       store.processedRequest == null) ...[
                                     const Text(
+                                      'Select Building and Floor',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    // Building and Floor Filters
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                                decoration:
+                                                    const InputDecoration(
+                                                      labelText: 'Building',
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      prefixIcon: Icon(
+                                                        Icons.business,
+                                                      ),
+                                                    ),
+                                                value: store.selectedBuilding,
+                                                items: store.buildings
+                                                    .map(
+                                                      (building) =>
+                                                          DropdownMenuItem(
+                                                            value: building,
+                                                            child: Text(
+                                                              building,
+                                                            ),
+                                                          ),
+                                                    )
+                                                    .toList(),
+                                                onChanged:
+                                                    store.isLoadingBuildings
+                                                    ? null
+                                                    : (value) {
+                                                        if (value != null) {
+                                                          store.setBuilding(
+                                                            value,
+                                                          );
+                                                        }
+                                                      },
+                                              ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: DropdownButtonFormField<int>(
+                                            decoration: const InputDecoration(
+                                              labelText: 'Floor',
+                                              border: OutlineInputBorder(),
+                                              prefixIcon: Icon(Icons.layers),
+                                            ),
+                                            value: store.selectedFloor,
+                                            items: store.floors
+                                                .map(
+                                                  (floor) => DropdownMenuItem(
+                                                    value: floor,
+                                                    child: Text('Floor $floor'),
+                                                  ),
+                                                )
+                                                .toList(),
+                                            onChanged:
+                                                store.isLoadingFloors ||
+                                                    store.selectedBuilding ==
+                                                        null
+                                                ? null
+                                                : (value) {
+                                                    if (value != null) {
+                                                      store.setFloor(value);
+                                                    }
+                                                  },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 24),
+                                    const Text(
                                       'Available Rooms',
                                       style: TextStyle(
                                         fontSize: 20,
@@ -72,8 +150,28 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                         child: CircularProgressIndicator(),
                                       )
                                     else if (store.availableRooms.isEmpty)
-                                      const Center(
-                                        child: Text('No available rooms found'),
+                                      Center(
+                                        child: Column(
+                                          children: [
+                                            const Icon(
+                                              Icons.search_off,
+                                              size: 48,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              store.selectedBuilding != null ||
+                                                      store.selectedFloor !=
+                                                          null
+                                                  ? 'No available rooms found with selected filters'
+                                                  : 'Please select a building to view available rooms',
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
                                       )
                                     else
                                       SizedBox(
@@ -92,13 +190,31 @@ class ProcessRoomRequestPage extends StatelessWidget {
                                                   ? Colors.blue.shade50
                                                   : null,
                                               child: ListTile(
+                                                leading: Icon(
+                                                  Icons.meeting_room,
+                                                  color: isSelected
+                                                      ? Colors.blue
+                                                      : Colors.grey,
+                                                  size: 32,
+                                                ),
                                                 title: Text(
                                                   'Room ${room.roomNumber}',
+                                                  style: TextStyle(
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                  ),
                                                 ),
                                                 subtitle: Text(
                                                   'Floor: ${room.floor}\n'
                                                   'Amenities: ${[if (room.hasAc) 'AC', if (room.hasGeyser) 'Geyser', if (room.hasSofaSet) 'Sofa Set'].join(', ')}',
                                                 ),
+                                                trailing: isSelected
+                                                    ? const Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.blue,
+                                                      )
+                                                    : null,
                                                 selected: isSelected,
                                                 onTap: () =>
                                                     store.selectRoom(room),

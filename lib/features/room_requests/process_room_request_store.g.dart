@@ -157,6 +157,134 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
     });
   }
 
+  late final _$selectedBuildingAtom = Atom(
+    name: '_ProcessRoomRequestStore.selectedBuilding',
+    context: context,
+  );
+
+  @override
+  String? get selectedBuilding {
+    _$selectedBuildingAtom.reportRead();
+    return super.selectedBuilding;
+  }
+
+  @override
+  set selectedBuilding(String? value) {
+    _$selectedBuildingAtom.reportWrite(value, super.selectedBuilding, () {
+      super.selectedBuilding = value;
+    });
+  }
+
+  late final _$selectedFloorAtom = Atom(
+    name: '_ProcessRoomRequestStore.selectedFloor',
+    context: context,
+  );
+
+  @override
+  int? get selectedFloor {
+    _$selectedFloorAtom.reportRead();
+    return super.selectedFloor;
+  }
+
+  @override
+  set selectedFloor(int? value) {
+    _$selectedFloorAtom.reportWrite(value, super.selectedFloor, () {
+      super.selectedFloor = value;
+    });
+  }
+
+  late final _$buildingsAtom = Atom(
+    name: '_ProcessRoomRequestStore.buildings',
+    context: context,
+  );
+
+  @override
+  ObservableList<String> get buildings {
+    _$buildingsAtom.reportRead();
+    return super.buildings;
+  }
+
+  @override
+  set buildings(ObservableList<String> value) {
+    _$buildingsAtom.reportWrite(value, super.buildings, () {
+      super.buildings = value;
+    });
+  }
+
+  late final _$floorsAtom = Atom(
+    name: '_ProcessRoomRequestStore.floors',
+    context: context,
+  );
+
+  @override
+  ObservableList<int> get floors {
+    _$floorsAtom.reportRead();
+    return super.floors;
+  }
+
+  @override
+  set floors(ObservableList<int> value) {
+    _$floorsAtom.reportWrite(value, super.floors, () {
+      super.floors = value;
+    });
+  }
+
+  late final _$isLoadingBuildingsAtom = Atom(
+    name: '_ProcessRoomRequestStore.isLoadingBuildings',
+    context: context,
+  );
+
+  @override
+  bool get isLoadingBuildings {
+    _$isLoadingBuildingsAtom.reportRead();
+    return super.isLoadingBuildings;
+  }
+
+  @override
+  set isLoadingBuildings(bool value) {
+    _$isLoadingBuildingsAtom.reportWrite(value, super.isLoadingBuildings, () {
+      super.isLoadingBuildings = value;
+    });
+  }
+
+  late final _$isLoadingFloorsAtom = Atom(
+    name: '_ProcessRoomRequestStore.isLoadingFloors',
+    context: context,
+  );
+
+  @override
+  bool get isLoadingFloors {
+    _$isLoadingFloorsAtom.reportRead();
+    return super.isLoadingFloors;
+  }
+
+  @override
+  set isLoadingFloors(bool value) {
+    _$isLoadingFloorsAtom.reportWrite(value, super.isLoadingFloors, () {
+      super.isLoadingFloors = value;
+    });
+  }
+
+  late final _$fetchBuildingsAsyncAction = AsyncAction(
+    '_ProcessRoomRequestStore.fetchBuildings',
+    context: context,
+  );
+
+  @override
+  Future<void> fetchBuildings() {
+    return _$fetchBuildingsAsyncAction.run(() => super.fetchBuildings());
+  }
+
+  late final _$fetchFloorsAsyncAction = AsyncAction(
+    '_ProcessRoomRequestStore.fetchFloors',
+    context: context,
+  );
+
+  @override
+  Future<void> fetchFloors(String building) {
+    return _$fetchFloorsAsyncAction.run(() => super.fetchFloors(building));
+  }
+
   late final _$fetchAvailableRoomsAsyncAction = AsyncAction(
     '_ProcessRoomRequestStore.fetchAvailableRooms',
     context: context,
@@ -195,6 +323,30 @@ mixin _$ProcessRoomRequestStore on _ProcessRoomRequestStore, Store {
   );
 
   @override
+  void setBuilding(String? building) {
+    final _$actionInfo = _$_ProcessRoomRequestStoreActionController.startAction(
+      name: '_ProcessRoomRequestStore.setBuilding',
+    );
+    try {
+      return super.setBuilding(building);
+    } finally {
+      _$_ProcessRoomRequestStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setFloor(int? floor) {
+    final _$actionInfo = _$_ProcessRoomRequestStoreActionController.startAction(
+      name: '_ProcessRoomRequestStore.setFloor',
+    );
+    try {
+      return super.setFloor(floor);
+    } finally {
+      _$_ProcessRoomRequestStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void selectRoom(Room room) {
     final _$actionInfo = _$_ProcessRoomRequestStoreActionController.startAction(
       name: '_ProcessRoomRequestStore.selectRoom',
@@ -216,7 +368,13 @@ errorMessage: ${errorMessage},
 foodPassMessage: ${foodPassMessage},
 processedRequest: ${processedRequest},
 availableRooms: ${availableRooms},
-selectedRoom: ${selectedRoom}
+selectedRoom: ${selectedRoom},
+selectedBuilding: ${selectedBuilding},
+selectedFloor: ${selectedFloor},
+buildings: ${buildings},
+floors: ${floors},
+isLoadingBuildings: ${isLoadingBuildings},
+isLoadingFloors: ${isLoadingFloors}
     ''';
   }
 }

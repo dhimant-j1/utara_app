@@ -8,15 +8,31 @@ import 'package:utara_app/core/models/room.dart';
 class RoomsRepository {
   final String baseUrl = Const.baseUrl;
 
-  Future<List<Room>> fetchAvailableRooms({String? type}) async {
+  Future<List<Room>> fetchAvailableRooms({
+    String? type,
+    String? building,
+    int? floor,
+  }) async {
     AuthStore authStore = getIt<AuthStore>();
-    final uri = Uri.parse('$baseUrl/rooms/?is_visible=true&is_occupied=false');
+
+    // Build query parameters
+    final queryParams = {
+      'is_visible': 'true',
+      'is_occupied': 'false',
+      if (type != null) 'type': type,
+      if (building != null) 'building': building,
+      if (floor != null) 'floor': floor.toString(),
+    };
+
+    final uri = Uri.parse(
+      '$baseUrl/rooms/',
+    ).replace(queryParameters: queryParams);
 
     final response = await http.get(
       uri,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authStore.token}'
+        'Authorization': 'Bearer ${authStore.token}',
       },
     );
 
