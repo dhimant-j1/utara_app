@@ -165,6 +165,7 @@ mixin _$AuthStore on _AuthStoreBase, Store {
     required String email,
     required String password,
     required String name,
+    required String gaam,
     required String phoneNumber,
     String? role,
   }) {
@@ -173,9 +174,25 @@ mixin _$AuthStore on _AuthStoreBase, Store {
         email: email,
         password: password,
         name: name,
+        gaam: gaam,
         phoneNumber: phoneNumber,
         role: role,
       ),
+    );
+  }
+
+  late final _$verifySignupOtpAsyncAction = AsyncAction(
+    '_AuthStoreBase.verifySignupOtp',
+    context: context,
+  );
+
+  @override
+  Future<bool> verifySignupOtp({
+    required String phoneNumber,
+    required String otp,
+  }) {
+    return _$verifySignupOtpAsyncAction.run(
+      () => super.verifySignupOtp(phoneNumber: phoneNumber, otp: otp),
     );
   }
 

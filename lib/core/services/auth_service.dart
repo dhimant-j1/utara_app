@@ -28,6 +28,7 @@ class AuthService {
   Future<Map<String, dynamic>> signup({
     required String email,
     required String password,
+    required String gaam,
     required String name,
     required String phoneNumber,
     String? role,
@@ -37,6 +38,7 @@ class AuthService {
         'email': email,
         'password': password,
         'name': name,
+        'gaam': gaam,
         'phone_number': phoneNumber,
       };
 
@@ -45,6 +47,21 @@ class AuthService {
       }
 
       final response = await _apiService.dio.post('/auth/signup', data: data);
+      return response.data;
+    } catch (e) {
+      throw _handleAuthError(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> verifySignupOtp({
+    required String phoneNumber,
+    required String otp,
+  }) async {
+    try {
+      final response = await _apiService.dio.post(
+        '/auth/verify-signup-otp',
+        data: {'phone_number': phoneNumber, 'otp': otp},
+      );
       return response.data;
     } catch (e) {
       throw _handleAuthError(e);

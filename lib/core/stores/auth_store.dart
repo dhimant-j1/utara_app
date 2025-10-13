@@ -107,11 +107,13 @@ abstract class _AuthStoreBase with Store {
     }
   }
 
+
   @action
   Future<bool> signup({
     required String email,
     required String password,
     required String name,
+    required String gaam,
     required String phoneNumber,
     String? role,
   }) async {
@@ -119,12 +121,36 @@ abstract class _AuthStoreBase with Store {
     errorMessage = null;
 
     try {
-      final result = await _authService.signup(
+      await _authService.signup(
         email: email,
         password: password,
         name: name,
+        gaam: gaam,
         phoneNumber: phoneNumber,
         role: role,
+      );
+      // OTP sent successfully, no token yet
+      return true;
+    } catch (e) {
+      errorMessage = e.toString();
+      return false;
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future<bool> verifySignupOtp({
+    required String phoneNumber,
+    required String otp,
+  }) async {
+    isLoading = true;
+    errorMessage = null;
+
+    try {
+      final result = await _authService.verifySignupOtp(
+        phoneNumber: phoneNumber,
+        otp: otp,
       );
       token = result['token'];
       currentUser = User.fromJson(result['user']);
@@ -140,6 +166,7 @@ abstract class _AuthStoreBase with Store {
       isLoading = false;
     }
   }
+
 
   @action
   Future<void> logout() async {

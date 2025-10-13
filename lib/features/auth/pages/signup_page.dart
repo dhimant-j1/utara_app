@@ -1,9 +1,12 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:utara_app/core/theme/app_theme.dart';
+// import 'package:utara_client/core/theme/app_theme.dart';
 import '../../../core/stores/auth_store.dart';
 import '../../../core/models/user.dart';
 
@@ -19,7 +22,8 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _authStore = GetIt.instance<AuthStore>();
-  String role = 'STAFF';
+  String role = 'USER';
+  String _countryCode = '+91';
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +42,25 @@ class _SignupPageState extends State<SignupPage> {
             child: Column(
               children: [
                 // Header
-                const Icon(
-                  Icons.person_add,
-                  size: 64,
-                  color: Colors.blue,
+                CircleAvatar(
+                  radius: 50,
+                  // backgroundImage: AssetImage('assets/Images/BAPS_logo.png'),
+                  // backgroundColor: AppTheme.appBarColor,
+                  child: Icon(Icons.person),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'Join Utara App',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    // color: AppTheme.appBarColor,
+                  ),
                 ),
                 Text(
                   'Create your account to get started',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 32),
 
@@ -88,10 +94,32 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: 16),
                       FormBuilderTextField(
-                        name: 'phone_number',
+                        name: 'gaam',
                         decoration: const InputDecoration(
+                          labelText: 'Gaam',
+                          prefixIcon: Icon(Icons.location_city),
+                        ),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                        ]),
+                      ),
+                      const SizedBox(height: 16),
+                      FormBuilderTextField(
+                        name: 'phone_number',
+                        decoration: InputDecoration(
                           labelText: 'Phone Number',
-                          prefixIcon: Icon(Icons.phone),
+                          prefixIcon: CountryCodePicker(
+                            onChanged: (value) {
+                              // print(value);
+                              _countryCode = value.dialCode ?? '+91';
+                            },
+                            initialSelection: 'IN',
+                            favorite: ['+91', 'IN'],
+                            showCountryOnly: false,
+                            showOnlyCountryWhenClosed: false,
+                            alignLeft: false,
+                            showFlag: false,
+                          ),
                         ),
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(),
@@ -124,7 +152,9 @@ class _SignupPageState extends State<SignupPage> {
                           FormBuilderValidators.required(),
                           (value) {
                             final password = _formKey
-                                .currentState?.fields['password']?.value;
+                                .currentState
+                                ?.fields['password']
+                                ?.value;
                             if (value != password) {
                               return 'Passwords do not match';
                             }
@@ -133,14 +163,17 @@ class _SignupPageState extends State<SignupPage> {
                         ]),
                       ),
                       const SizedBox(height: 16),
+
                       FutureBuilder<bool>(
-                        future: Future.value(Theme.of(context).platform ==
-                                TargetPlatform.android ||
-                            Theme.of(context).platform == TargetPlatform.iOS),
+                        future: Future.value(
+                          Theme.of(context).platform ==
+                                  TargetPlatform.android ||
+                              Theme.of(context).platform == TargetPlatform.iOS,
+                        ),
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data == true) {
                             // Mobile device - role is fixed to STAFF
-                            role = 'STAFF';
+                            role = 'USER';
                             return const SizedBox.shrink();
                           } else {
                             // Desktop/Web - show role dropdown
@@ -151,10 +184,12 @@ class _SignupPageState extends State<SignupPage> {
                                 prefixIcon: Icon(Icons.admin_panel_settings),
                               ),
                               items: UserRole.values
-                                  .map((role) => DropdownMenuItem(
-                                        value: role,
-                                        child: Text(_getRoleDisplayName(role)),
-                                      ))
+                                  .map(
+                                    (role) => DropdownMenuItem(
+                                      value: role,
+                                      child: Text(_getRoleDisplayName(role)),
+                                    ),
+                                  )
                                   .toList(),
                               validator: FormBuilderValidators.required(),
                               onChanged: (value) {
@@ -182,14 +217,16 @@ class _SignupPageState extends State<SignupPage> {
                         height: 48,
                         child: Observer(
                           builder: (_) => ElevatedButton(
-                            onPressed:
-                                _authStore.isLoading ? null : _handleSignup,
+                            onPressed: _authStore.isLoading
+                                ? null
+                                : _handleSignup,
                             child: _authStore.isLoading
                                 ? const SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
-                                        strokeWidth: 2),
+                                      strokeWidth: 2,
+                                    ),
                                   )
                                 : const Text('Create Account'),
                           ),
@@ -209,14 +246,17 @@ class _SignupPageState extends State<SignupPage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.error_outline,
-                                        color: Colors.red[700]),
+                                    Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red[700],
+                                    ),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
                                         _authStore.errorMessage!,
-                                        style:
-                                            TextStyle(color: Colors.red[700]),
+                                        style: TextStyle(
+                                          color: Colors.red[700],
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -255,12 +295,15 @@ class _SignupPageState extends State<SignupPage> {
   Future<void> _handleSignup() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final values = _formKey.currentState!.value;
+      final phoneNumber =
+          _countryCode.split('+')[1] + (values['phone_number'] as String);
 
       final success = await _authStore.signup(
         email: values['email'] as String,
+        gaam: values['gaam'] as String,
         password: values['password'] as String,
         name: values['name'] as String,
-        phoneNumber: values['phone_number'] as String,
+        phoneNumber: phoneNumber,
         role: role,
       );
 
@@ -268,18 +311,13 @@ class _SignupPageState extends State<SignupPage> {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Account created successfully!'),
+            content: Text('OTP sent to your phone number!'),
             backgroundColor: Colors.green,
           ),
         );
 
-        // Navigate based on context
-        if (_authStore.isAuthenticated) {
-          context
-              .go('/dashboard'); // Admin creating account, go back to dashboard
-        } else {
-          context.go('/dashboard'); // New user, go to dashboard
-        }
+        // Navigate to OTP verification page
+        context.push('/auth/verify-signup-otp', extra: phoneNumber);
       }
     }
   }

@@ -27,6 +27,8 @@ class User {
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
+  @JsonKey(name: 'user_type')
+  final String? userType;
 
   const User({
     required this.id,
@@ -38,6 +40,7 @@ class User {
     required this.phoneNumber,
     required this.createdAt,
     required this.updatedAt,
+    required this.userType,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -53,6 +56,7 @@ class User {
     String? phoneNumber,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? userType,
   }) {
     return User(
       id: id ?? this.id,
@@ -64,6 +68,7 @@ class User {
       phoneNumber: phoneNumber ?? this.phoneNumber,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      userType: userType ?? this.userType,
     );
   }
 

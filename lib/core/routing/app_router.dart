@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:utara_app/features/auth/pages/verify_signup_otp_page.dart';
 import 'package:utara_app/features/users/pages/manage_user.dart';
 import '../stores/auth_store.dart';
 import '../../features/auth/pages/login_page.dart';
@@ -48,6 +49,13 @@ class AppRouter {
       GoRoute(
         path: '/auth/signup',
         builder: (context, state) => const SignupPage(),
+      ),
+      GoRoute(
+        path: '/auth/verify-signup-otp',
+        builder: (context, state) {
+          final phoneNumber = state.extra as String? ?? '';
+          return VerifySignupOtpPage(phoneNumber: phoneNumber);
+        },
       ),
 
       // Dashboard route
