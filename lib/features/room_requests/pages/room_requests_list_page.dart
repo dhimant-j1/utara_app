@@ -118,6 +118,7 @@ class RoomRequestsListPage extends StatelessWidget {
 
   Widget _buildListView(BuildContext context, RoomRequestsStore store) {
     final dateFormat = DateFormat('MMM dd, yyyy');
+    final dateTimeFormat = DateFormat('MMM dd, yyyy h:mm a');
 
     return ListView.separated(
       itemCount: store.filteredRequests.length,
@@ -165,7 +166,7 @@ class RoomRequestsListPage extends StatelessWidget {
                 _buildInfoRow(
                   context,
                   Icons.calendar_today,
-                  'Check-out: ${dateFormat.format(req.checkOutDate.toLocal())}',
+                  'Check-out: ${dateTimeFormat.format(req.checkOutDate.toLocal())}',
                 ),
                 const SizedBox(height: 4),
                 _buildInfoRow(
@@ -305,6 +306,7 @@ class RoomRequestsListPage extends StatelessWidget {
 
   Widget _buildGridView(BuildContext context, RoomRequestsStore store) {
     final dateFormat = DateFormat('MMM dd, yyyy');
+    final dateTimeFormat = DateFormat('MMM dd, yyyy h:mm a');
 
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -386,7 +388,7 @@ class RoomRequestsListPage extends StatelessWidget {
                   _buildInfoRow(
                     context,
                     Icons.calendar_today,
-                    'Check-out: ${dateFormat.format(req.checkOutDate.toLocal())}',
+                    'Check-out: ${dateTimeFormat.format(req.checkOutDate.toLocal())}',
                   ),
                   const SizedBox(height: 4),
                   _buildInfoRow(
