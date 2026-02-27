@@ -35,6 +35,7 @@ RoomRequest _$RoomRequestFromJson(Map<String, dynamic> json) => RoomRequest(
       ? null
       : RoomAssignment.fromJson(json['assignment'] as Map<String, dynamic>),
   reference: json['reference'] as String?,
+  chitthiUrl: json['chitthi_url'] as String?,
 );
 
 Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
@@ -57,6 +58,7 @@ Map<String, dynamic> _$RoomRequestToJson(RoomRequest instance) =>
       'reference': instance.reference,
       'room': instance.room,
       'assignment': instance.assignment,
+      'chitthi_url': instance.chitthiUrl,
     };
 
 const _$RequestStatusEnumMap = {

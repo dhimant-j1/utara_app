@@ -23,12 +23,8 @@ class UtaraApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthStore>(
-          create: (_) => GetIt.instance<AuthStore>(),
-        ),
-        Provider<FoodPassStore>(
-          create: (_) => GetIt.instance<FoodPassStore>(),
-        ),
+        Provider<AuthStore>(create: (_) => GetIt.instance<AuthStore>()),
+        Provider<FoodPassStore>(create: (_) => GetIt.instance<FoodPassStore>()),
       ],
       child: Consumer<AuthStore>(
         builder: (context, authStore, _) {

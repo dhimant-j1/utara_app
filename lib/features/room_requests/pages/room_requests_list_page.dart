@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:utara_app/core/models/room_request.dart';
 import 'package:utara_app/features/room_requests/stores/room_requests_store.dart';
 import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
+import 'package:utara_app/utils/const.dart';
 
 import '../../../core/di/service_locator.dart';
 
@@ -206,6 +207,11 @@ class RoomRequestsListPage extends StatelessWidget {
                   Icons.person,
                   'Special Requests: ${req.specialRequests}',
                 ),
+                const SizedBox(height: 4),
+                if (req.chitthiUrl != null && req.chitthiUrl!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  _buildViewChitthiButton(context, req.chitthiUrl!),
+                ],
                 const SizedBox(height: 4),
                 _buildStatusChip(context, req.status.name),
                 _buildCheckInCheckOut(context, store, req),
@@ -432,6 +438,10 @@ class RoomRequestsListPage extends StatelessWidget {
                     Icons.person,
                     'Special Requests: ${req.specialRequests}',
                   ),
+                  if (req.chitthiUrl != null && req.chitthiUrl!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    _buildViewChitthiButton(context, req.chitthiUrl!),
+                  ],
                   const Spacer(),
                   _buildStatusChip(context, req.status.name),
                   _buildCheckInCheckOut(context, store, req),
@@ -489,6 +499,111 @@ class RoomRequestsListPage extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 4),
+    );
+  }
+
+  Widget _buildViewChitthiButton(BuildContext context, String chitthiUrl) {
+    return OutlinedButton.icon(
+      onPressed: () => _showChitthiDialog(context, chitthiUrl),
+      icon: const Icon(Icons.image, size: 18),
+      label: const Text('View Chitthi'),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.deepPurple,
+        side: const BorderSide(color: Colors.deepPurple),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      ),
+    );
+  }
+
+  void _showChitthiDialog(BuildContext context, String chitthiUrl) {
+    final imageUrl = '${Const.baseUrl}$chitthiUrl';
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Chitthi',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        print("loadingProgress: $loadingProgress");
+                        print("imageUrl: $imageUrl");
+                        if (loadingProgress == null) return child;
+                        return SizedBox(
+                          height: 300,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(height: 8),
+                                Text('Failed to load image'),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
