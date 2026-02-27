@@ -25,7 +25,7 @@ class RoomRequestRepository {
       Uri.parse('$baseUrl/room-requests/$requestId/process'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authStore.token}'
+        'Authorization': 'Bearer ${authStore.token}',
       },
       body: jsonEncode({
         'status': status,
@@ -54,7 +54,7 @@ class RoomRequestRepository {
       Uri.parse('$baseUrl/room-requests/'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authStore.token}'
+        'Authorization': 'Bearer ${authStore.token}',
       },
       body: jsonEncode({
         'check_in_date': checkInDate.toUtc().toIso8601String(),
@@ -72,18 +72,24 @@ class RoomRequestRepository {
     }
   }
 
-  Future<List<RoomRequest>> fetchRoomRequests(
-      {String? status, String? userId}) async {
+  Future<List<RoomRequest>> fetchRoomRequests({
+    String? status,
+    String? userId,
+    bool? checkoutToday,
+  }) async {
     AuthStore authStore = getIt<AuthStore>();
-    final uri = Uri.parse('$baseUrl/room-requests/').replace(queryParameters: {
-      if (status != null) 'status': status,
-      if (userId != null) 'user_id': userId,
-    });
+    final uri = Uri.parse('$baseUrl/room-requests/').replace(
+      queryParameters: {
+        if (status != null) 'status': status,
+        if (userId != null) 'user_id': userId,
+        if (checkoutToday == true) 'checkout_today': 'true',
+      },
+    );
     final response = await http.get(
       uri,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authStore.token}'
+        'Authorization': 'Bearer ${authStore.token}',
       },
     );
     log(response.body.toString());
@@ -98,6 +104,49 @@ class RoomRequestRepository {
     }
   }
 
+  Future<RoomRequest> adminUpdateRoomRequest({
+    required String requestId,
+    DateTime? checkInDate,
+    DateTime? checkOutDate,
+    Map<String, int>? numberOfPeople,
+    String? place,
+    String? purpose,
+    String? reference,
+    String? specialRequests,
+  }) async {
+    AuthStore authStore = getIt<AuthStore>();
+    final body = <String, dynamic>{};
+
+    if (checkInDate != null) {
+      body['check_in_date'] = checkInDate.toUtc().toIso8601String();
+    }
+    if (checkOutDate != null) {
+      body['check_out_date'] = checkOutDate.toUtc().toIso8601String();
+    }
+    if (numberOfPeople != null) {
+      body['number_of_people'] = numberOfPeople;
+    }
+    if (place != null) body['place'] = place;
+    if (purpose != null) body['purpose'] = purpose;
+    if (reference != null) body['reference'] = reference;
+    if (specialRequests != null) body['special_requests'] = specialRequests;
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/room-requests/$requestId/admin-update'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authStore.token}',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return RoomRequest.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to update room request: ${response.body}');
+    }
+  }
+
   Future<bool> checkInCheckOut({
     required String id,
     required bool isCheckedIn,
@@ -109,9 +158,7 @@ class RoomRequestRepository {
             ? '/room-assignments/$id/check-out'
             : '/room-assignments/$id/check-in',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       final data = response.data as Map<String, dynamic>;

@@ -8,6 +8,8 @@ import 'package:utara_app/features/room_requests/stores/room_requests_store.dart
 import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
 import 'package:utara_app/utils/const.dart';
 
+import 'package:utara_app/features/room_requests/pages/edit_room_request_dialog.dart';
+
 import '../../../core/di/service_locator.dart';
 
 class RoomRequestsListPage extends StatelessWidget {
@@ -212,6 +214,10 @@ class RoomRequestsListPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   _buildViewChitthiButton(context, req.chitthiUrl!),
                 ],
+                if (req.status == RequestStatus.approved) ...[
+                  const SizedBox(height: 8),
+                  _buildEditRequestButton(context, store, req),
+                ],
                 const SizedBox(height: 4),
                 _buildStatusChip(context, req.status.name),
                 _buildCheckInCheckOut(context, store, req),
@@ -227,7 +233,6 @@ class RoomRequestsListPage extends StatelessWidget {
                       store.fetchRoomRequests();
                     });
               } else {
-                // Show a snackbar informing the user that the request is already processed
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -442,6 +447,10 @@ class RoomRequestsListPage extends StatelessWidget {
                     const SizedBox(height: 4),
                     _buildViewChitthiButton(context, req.chitthiUrl!),
                   ],
+                  if (req.status == RequestStatus.approved) ...[
+                    const SizedBox(height: 4),
+                    _buildEditRequestButton(context, store, req),
+                  ],
                   const Spacer(),
                   _buildStatusChip(context, req.status.name),
                   _buildCheckInCheckOut(context, store, req),
@@ -510,6 +519,38 @@ class RoomRequestsListPage extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         foregroundColor: Colors.deepPurple,
         side: const BorderSide(color: Colors.deepPurple),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      ),
+    );
+  }
+
+  Widget _buildEditRequestButton(
+    BuildContext context,
+    RoomRequestsStore store,
+    RoomRequest req,
+  ) {
+    return OutlinedButton.icon(
+      onPressed: () async {
+        final result = await showDialog<RoomRequest>(
+          context: context,
+          builder: (context) => EditRoomRequestDialog(roomRequest: req),
+        );
+        if (result != null) {
+          store.fetchRoomRequests();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Room request updated successfully.'),
+              ),
+            );
+          }
+        }
+      },
+      icon: const Icon(Icons.edit, size: 18),
+      label: const Text('Edit Request'),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.blue,
+        side: const BorderSide(color: Colors.blue),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       ),
     );

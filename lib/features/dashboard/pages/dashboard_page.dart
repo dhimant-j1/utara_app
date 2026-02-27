@@ -5,6 +5,9 @@ import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:utara_app/utils/const.dart';
 import '../../../core/stores/auth_store.dart';
+import 'package:utara_app/features/rooms/repository/room_repository.dart';
+import 'package:utara_app/features/room_requests/repository/room_request_repository.dart';
+import 'package:utara_app/core/models/room_request.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -119,6 +122,12 @@ class DashboardPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (authStore.canManageRooms) ...[
+                      const SizedBox(height: 32),
+                      const _RoomStatsSummary(),
+                      const SizedBox(height: 32),
+                      const _TodaysCheckouts(),
+                    ],
                     const SizedBox(height: 32),
 
                     // Main Actions Grid
@@ -347,6 +356,373 @@ class _DashboardCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _RoomStatsSummary extends StatefulWidget {
+  const _RoomStatsSummary({Key? key}) : super(key: key);
+
+  @override
+  State<_RoomStatsSummary> createState() => _RoomStatsSummaryState();
+}
+
+class _RoomStatsSummaryState extends State<_RoomStatsSummary> {
+  final _repository = GetIt.instance<RoomRepository>();
+  Map<String, dynamic>? _stats;
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final stats = await _repository.getRoomStats();
+      if (mounted) {
+        setState(() {
+          _stats = stats;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Card(
+        color: Colors.red.shade50,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Failed to load stats: $_error',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+              IconButton(
+                onPressed: _loadStats,
+                icon: const Icon(Icons.refresh, color: Colors.red),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final totalRooms = _stats?['total_rooms'] ?? 0;
+    final occupiedRooms = _stats?['occupied_rooms'] ?? 0;
+    final availableRooms = _stats?['available_rooms'] ?? 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Room Overview',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: _loadStats,
+              tooltip: 'Refresh stats',
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ResponsiveGrid(
+          crossAxisCount: MediaQuery.of(context).size.width > 800 ? 3 : 1,
+          children: [
+            _MiniStatCard(
+              title: 'Total Rooms',
+              value: totalRooms.toString(),
+              icon: Icons.meeting_room,
+              color: Colors.blue,
+            ),
+            _MiniStatCard(
+              title: 'Occupied',
+              value: occupiedRooms.toString(),
+              icon: Icons.person,
+              color: Colors.red,
+            ),
+            _MiniStatCard(
+              title: 'Available',
+              value: availableRooms.toString(),
+              icon: Icons.check_circle,
+              color: Colors.green,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _MiniStatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _MiniStatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: color.withOpacity(0.1),
+              child: Icon(icon, color: color),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TodaysCheckouts extends StatefulWidget {
+  const _TodaysCheckouts({Key? key}) : super(key: key);
+
+  @override
+  State<_TodaysCheckouts> createState() => _TodaysCheckoutsState();
+}
+
+class _TodaysCheckoutsState extends State<_TodaysCheckouts> {
+  final _repository = GetIt.instance<RoomRequestRepository>();
+  List<RoomRequest> _requests = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCheckouts();
+  }
+
+  Future<void> _loadCheckouts() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final requests = await _repository.fetchRoomRequests(
+        status: 'APPROVED',
+        checkoutToday: true,
+      );
+      if (mounted) {
+        setState(() {
+          _requests = requests;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Card(
+        color: Colors.red.shade50,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Failed to load today\'s checkouts: $_error',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+              IconButton(
+                onPressed: _loadCheckouts,
+                icon: const Icon(Icons.refresh, color: Colors.red),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Today\'s Checkouts (${_requests.length})',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: _loadCheckouts,
+              tooltip: 'Refresh list',
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        if (_requests.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Center(
+                child: Text(
+                  'No checkouts scheduled for today.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
+          )
+        else
+          SizedBox(
+            height: 180,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _requests.length,
+              itemBuilder: (context, index) {
+                final req = _requests[index];
+                return Container(
+                  width: 300,
+                  margin: const EdgeInsets.only(right: 16),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.meeting_room,
+                                color: Colors.blue,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  req.room != null
+                                      ? 'Room ${req.room!.roomNumber}'
+                                      : 'Room Pending',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Name: ${req.user?.name ?? req.name}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Total People: ${req.numberOfPeople.total}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const Spacer(),
+                          OutlinedButton(
+                            onPressed: () {
+                              context
+                                  .push(
+                                    '/room-requests/${req.id}/process',
+                                    extra: req,
+                                  )
+                                  .then((_) {
+                                    _loadCheckouts();
+                                  });
+                            },
+                            child: const Text('View Request'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }
