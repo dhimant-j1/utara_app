@@ -60,6 +60,7 @@ class Room {
   final String id;
   @JsonKey(name: 'room_number')
   final String roomNumber;
+  final String building;
   final int floor;
   final RoomType type;
   final List<Bed> beds;
@@ -88,6 +89,7 @@ class Room {
   const Room({
     required this.id,
     required this.roomNumber,
+    required this.building,
     required this.floor,
     required this.type,
     required this.beds,
@@ -110,6 +112,7 @@ class Room {
   Room copyWith({
     String? id,
     String? roomNumber,
+    String? building,
     int? floor,
     RoomType? type,
     List<Bed>? beds,
@@ -128,6 +131,7 @@ class Room {
     return Room(
       id: id ?? this.id,
       roomNumber: roomNumber ?? this.roomNumber,
+      building: building ?? this.building,
       floor: floor ?? this.floor,
       type: type ?? this.type,
       beds: beds ?? this.beds,

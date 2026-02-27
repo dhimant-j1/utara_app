@@ -37,6 +37,7 @@ Map<String, dynamic> _$RoomImageToJson(RoomImage instance) => <String, dynamic>{
 Room _$RoomFromJson(Map<String, dynamic> json) => Room(
   id: json['id'] as String,
   roomNumber: json['room_number'] as String,
+  building: json['building'] as String,
   floor: (json['floor'] as num).toInt(),
   type: $enumDecode(_$RoomTypeEnumMap, json['type']),
   beds: (json['beds'] as List<dynamic>)
@@ -52,6 +53,7 @@ Room _$RoomFromJson(Map<String, dynamic> json) => Room(
       ?.map((e) => RoomImage.fromJson(e as Map<String, dynamic>))
       .toList(),
   isOccupied: json['is_occupied'] as bool? ?? false,
+  needsCleaning: json['needs_cleaning'] as bool? ?? false,
   createdAt: DateTime.parse(json['created_at'] as String),
   updatedAt: DateTime.parse(json['updated_at'] as String),
 );
@@ -59,6 +61,7 @@ Room _$RoomFromJson(Map<String, dynamic> json) => Room(
 Map<String, dynamic> _$RoomToJson(Room instance) => <String, dynamic>{
   'id': instance.id,
   'room_number': instance.roomNumber,
+  'building': instance.building,
   'floor': instance.floor,
   'type': _$RoomTypeEnumMap[instance.type]!,
   'beds': instance.beds,
@@ -70,6 +73,7 @@ Map<String, dynamic> _$RoomToJson(Room instance) => <String, dynamic>{
   'is_visible': instance.isVisible,
   'images': instance.images,
   'is_occupied': instance.isOccupied,
+  'needs_cleaning': instance.needsCleaning,
   'created_at': instance.createdAt.toIso8601String(),
   'updated_at': instance.updatedAt.toIso8601String(),
 };

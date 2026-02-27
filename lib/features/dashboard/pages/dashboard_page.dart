@@ -620,6 +620,15 @@ class _TodaysCheckoutsState extends State<_TodaysCheckouts> {
       );
     }
 
+    // Calculate building summary
+    final buildingSummary = <String, int>{};
+    for (var req in _requests) {
+      if (req.room?.building != null) {
+        final b = req.room!.building;
+        buildingSummary[b] = (buildingSummary[b] ?? 0) + 1;
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -639,6 +648,24 @@ class _TodaysCheckoutsState extends State<_TodaysCheckouts> {
             ),
           ],
         ),
+        if (buildingSummary.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: buildingSummary.entries.map((e) {
+                return Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  child: Chip(
+                    avatar: const Icon(Icons.home_work, size: 16),
+                    label: Text('${e.key}: ${e.value} rooms getting empty'),
+                    backgroundColor: Colors.blue.shade50,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
         const SizedBox(height: 16),
         if (_requests.isEmpty)
           const Card(
@@ -654,14 +681,14 @@ class _TodaysCheckoutsState extends State<_TodaysCheckouts> {
           )
         else
           SizedBox(
-            height: 180,
+            height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: _requests.length,
               itemBuilder: (context, index) {
                 final req = _requests[index];
                 return Container(
-                  width: 300,
+                  width: 320,
                   margin: const EdgeInsets.only(right: 16),
                   child: Card(
                     elevation: 2,
@@ -692,6 +719,25 @@ class _TodaysCheckoutsState extends State<_TodaysCheckouts> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              if (req.room?.building != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    req.room!.building,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blue.shade800,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                           const Divider(),
