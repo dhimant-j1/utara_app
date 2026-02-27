@@ -42,7 +42,8 @@ class RoomRepository {
         },
         options: Options(
           headers: {
-            'Authorization': 'Bearer ${authStore.token}', // Replace with actual token
+            'Authorization':
+                'Bearer ${authStore.token}', // Replace with actual token
           },
         ),
       );
@@ -90,9 +91,7 @@ class RoomRepository {
         '/rooms/',
         queryParameters: queryParams,
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return List<Map<String, dynamic>>.from(response.data);
@@ -121,9 +120,7 @@ class RoomRepository {
       final response = await _apiService.dio.get(
         '/rooms/$roomId',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -180,9 +177,7 @@ class RoomRepository {
           if (images != null) 'images': images,
         },
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -215,9 +210,7 @@ class RoomRepository {
       final response = await _apiService.dio.delete(
         '/rooms/$roomId',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -248,9 +241,7 @@ class RoomRepository {
       final response = await _apiService.dio.get(
         '/rooms/stats',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -323,16 +314,16 @@ class RoomRepository {
   }
 
   // Simplified createRoom method for CSV bulk upload (kept for compatibility)
-  Future<Map<String, dynamic>> createRoomFromData(Map<String, dynamic> roomData) async {
+  Future<Map<String, dynamic>> createRoomFromData(
+    Map<String, dynamic> roomData,
+  ) async {
     try {
       AuthStore authStore = getIt<AuthStore>();
       final response = await _apiService.dio.post(
         '/rooms/',
         data: roomData,
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -366,9 +357,7 @@ class RoomRepository {
       final response = await _apiService.dio.get(
         '/rooms/buildings',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -397,9 +386,7 @@ class RoomRepository {
         '/rooms/floors',
         queryParameters: {'building': building},
         options: Options(
-          headers: {
-            'Authorization': 'Bearer ${authStore.token}',
-          },
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
         ),
       );
       return response.data;
@@ -416,6 +403,38 @@ class RoomRepository {
           throw 'Server error. Please try again later';
         default:
           throw data?['error'] ?? 'Failed to fetch floors';
+      }
+    } catch (e) {
+      throw 'An unexpected error occurred: $e';
+    }
+  }
+
+  // Toggle room cleaning status
+  Future<Map<String, dynamic>> toggleRoomCleaning(String roomId) async {
+    try {
+      AuthStore authStore = getIt<AuthStore>();
+      final response = await _apiService.dio.put(
+        '/rooms/$roomId/toggle-cleaning',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${authStore.token}'},
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final data = e.response?.data;
+
+      switch (statusCode) {
+        case 401:
+          throw 'Unauthorized access';
+        case 403:
+          throw 'You do not have permission to toggle cleaning status';
+        case 404:
+          throw 'Room not found';
+        case 500:
+          throw 'Server error. Please try again later';
+        default:
+          throw data?['error'] ?? 'Failed to toggle cleaning status';
       }
     } catch (e) {
       throw 'An unexpected error occurred: $e';

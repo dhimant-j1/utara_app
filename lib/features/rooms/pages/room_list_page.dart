@@ -7,11 +7,7 @@ class RoomListPage extends StatefulWidget {
   final String? building;
   final int? floor;
 
-  const RoomListPage({
-    super.key,
-    this.building,
-    this.floor,
-  });
+  const RoomListPage({super.key, this.building, this.floor});
 
   @override
   State<RoomListPage> createState() => _RoomListPageState();
@@ -101,7 +97,10 @@ class _RoomListPageState extends State<RoomListPage> {
   }
 
   bool get _hasActiveFilters {
-    return _selectedFloor != null || _selectedType != null || _isVisible != null || _isOccupied != null;
+    return _selectedFloor != null ||
+        _selectedType != null ||
+        _isVisible != null ||
+        _isOccupied != null;
   }
 
   Future<void> _deleteRoom(Map<String, dynamic> room) async {
@@ -114,14 +113,13 @@ class _RoomListPageState extends State<RoomListPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Are you sure you want to delete room ${room['room_number']}?'),
+            Text(
+              'Are you sure you want to delete room ${room['room_number']}?',
+            ),
             const SizedBox(height: 8),
             const Text(
               'This action cannot be undone.',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -144,20 +142,7 @@ class _RoomListPageState extends State<RoomListPage> {
 
     if (confirmed == true) {
       // Show loading dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('Deleting room...'),
-            ],
-          ),
-        ),
-      );
+      _showLoadingDialog('Deleting room...');
 
       try {
         await _repository.deleteRoom(room['id']);
@@ -181,6 +166,49 @@ class _RoomListPageState extends State<RoomListPage> {
             ),
           );
         }
+      }
+    }
+  }
+
+  void _showLoadingDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(message),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleCleaning(Map<String, dynamic> room) async {
+    _showLoadingDialog(
+      room['needs_cleaning'] == true
+          ? 'Finishing cleaning...'
+          : 'Starting cleaning...',
+    );
+
+    try {
+      await _repository.toggleRoomCleaning(room['id']);
+      if (mounted) {
+        Navigator.of(context).pop(); // Close loading dialog
+        _loadRooms(); // Refresh the list
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update cleaning status: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -237,7 +265,9 @@ class _RoomListPageState extends State<RoomListPage> {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        context.push('/rooms/${room['id']}/edit').then((result) {
+                        context.push('/rooms/${room['id']}/edit').then((
+                          result,
+                        ) {
                           if (result == true) {
                             _loadRooms();
                           }
@@ -261,19 +291,55 @@ class _RoomListPageState extends State<RoomListPage> {
                   ],
                 ),
                 const SizedBox(height: 8),
+                if (room['is_occupied'] != true)
+                  ElevatedButton.icon(
+                    onPressed: () => _toggleCleaning(room),
+                    icon: Icon(
+                      room['needs_cleaning'] == true
+                          ? Icons.check_circle
+                          : Icons.cleaning_services,
+                    ),
+                    label: Text(
+                      room['needs_cleaning'] == true
+                          ? 'Finish Cleaning'
+                          : 'Start Cleaning',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: room['needs_cleaning'] == true
+                          ? Colors.orange
+                          : Colors.blueGrey,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: room['is_occupied'] == true ? Colors.red.shade100 : Colors.green.shade100,
+                        color: room['is_occupied'] == true
+                            ? Colors.red.shade100
+                            : (room['needs_cleaning'] == true
+                                  ? Colors.orange.shade100
+                                  : Colors.green.shade100),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        room['is_occupied'] == true ? 'Occupied' : 'Available',
+                        room['is_occupied'] == true
+                            ? 'Occupied'
+                            : (room['needs_cleaning'] == true
+                                  ? 'Cleaning'
+                                  : 'Available'),
                         style: TextStyle(
-                          color: room['is_occupied'] == true ? Colors.red.shade700 : Colors.green.shade700,
+                          color: room['is_occupied'] == true
+                              ? Colors.red.shade700
+                              : (room['needs_cleaning'] == true
+                                    ? Colors.orange.shade700
+                                    : Colors.green.shade700),
                           fontSize: 12,
                         ),
                       ),
@@ -281,7 +347,10 @@ class _RoomListPageState extends State<RoomListPage> {
                     const SizedBox(width: 4),
                     if (room['is_visible'] != true)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(12),
@@ -306,8 +375,11 @@ class _RoomListPageState extends State<RoomListPage> {
 
   Widget _buildResponsiveList(BuildContext context) {
     final isWide = MediaQuery.of(context).size.width > 700;
-    final padding =
-        isWide ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.15) : EdgeInsets.zero;
+    final padding = isWide
+        ? EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.15,
+          )
+        : EdgeInsets.zero;
 
     return Padding(
       padding: padding,
@@ -334,7 +406,10 @@ class _RoomListPageState extends State<RoomListPage> {
                       children: [
                         const Text(
                           'Filters',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const Spacer(),
                         if (_hasActiveFilters)
@@ -358,10 +433,12 @@ class _RoomListPageState extends State<RoomListPage> {
                             ),
                             value: _selectedFloor,
                             items: List.generate(10, (index) => index + 1)
-                                .map((floor) => DropdownMenuItem(
-                                      value: floor,
-                                      child: Text('Floor $floor'),
-                                    ))
+                                .map(
+                                  (floor) => DropdownMenuItem(
+                                    value: floor,
+                                    child: Text('Floor $floor'),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (value) {
                               setState(() {
@@ -481,9 +558,11 @@ class _RoomListPageState extends State<RoomListPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text(widget.building != null && widget.floor != null
-                ? 'Rooms - ${widget.building} Floor ${widget.floor}'
-                : 'Rooms'),
+            Text(
+              widget.building != null && widget.floor != null
+                  ? 'Rooms - ${widget.building} Floor ${widget.floor}'
+                  : 'Rooms',
+            ),
             if (_hasActiveFilters) ...[
               const SizedBox(width: 8),
               Container(
@@ -514,17 +593,16 @@ class _RoomListPageState extends State<RoomListPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(_showFilters ? Icons.filter_list : Icons.filter_list_outlined),
+            icon: Icon(
+              _showFilters ? Icons.filter_list : Icons.filter_list_outlined,
+            ),
             onPressed: () {
               setState(() {
                 _showFilters = !_showFilters;
               });
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadRooms,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadRooms),
         ],
       ),
       body: Column(
@@ -556,35 +634,35 @@ class _RoomListPageState extends State<RoomListPage> {
                     ),
                   )
                 : _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _rooms == null
-                        ? const Center(child: CircularProgressIndicator())
-                        : _rooms!.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.meeting_room_outlined,
-                                      size: 64,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const Text('No rooms found'),
-                                    if (_hasActiveFilters) ...[
-                                      const SizedBox(height: 8),
-                                      TextButton(
-                                        onPressed: _clearFilters,
-                                        child: const Text('Clear filters'),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              )
-                            : RefreshIndicator(
-                                onRefresh: _loadRooms,
-                                child: _buildResponsiveList(context),
-                              ),
+                ? const Center(child: CircularProgressIndicator())
+                : _rooms == null
+                ? const Center(child: CircularProgressIndicator())
+                : _rooms!.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.meeting_room_outlined,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text('No rooms found'),
+                        if (_hasActiveFilters) ...[
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: _clearFilters,
+                            child: const Text('Clear filters'),
+                          ),
+                        ],
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadRooms,
+                    child: _buildResponsiveList(context),
+                  ),
           ),
         ],
       ),

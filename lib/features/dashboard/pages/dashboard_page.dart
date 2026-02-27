@@ -436,6 +436,7 @@ class _RoomStatsSummaryState extends State<_RoomStatsSummary> {
 
     final totalRooms = _stats?['total_rooms'] ?? 0;
     final occupiedRooms = _stats?['occupied_rooms'] ?? 0;
+    final cleaningRooms = _stats?['cleaning_rooms'] ?? 0;
     final availableRooms = _stats?['available_rooms'] ?? 0;
 
     return Column(
@@ -459,7 +460,7 @@ class _RoomStatsSummaryState extends State<_RoomStatsSummary> {
         ),
         const SizedBox(height: 16),
         ResponsiveGrid(
-          crossAxisCount: MediaQuery.of(context).size.width > 800 ? 3 : 1,
+          crossAxisCount: MediaQuery.of(context).size.width > 800 ? 4 : 2,
           children: [
             _MiniStatCard(
               title: 'Total Rooms',
@@ -472,6 +473,12 @@ class _RoomStatsSummaryState extends State<_RoomStatsSummary> {
               value: occupiedRooms.toString(),
               icon: Icons.person,
               color: Colors.red,
+            ),
+            _MiniStatCard(
+              title: 'Cleaning',
+              value: cleaningRooms.toString(),
+              icon: Icons.cleaning_services,
+              color: Colors.orange,
             ),
             _MiniStatCard(
               title: 'Available',

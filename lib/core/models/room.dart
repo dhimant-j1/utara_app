@@ -31,10 +31,7 @@ class Bed {
   final BedType type;
   final int quantity;
 
-  const Bed({
-    required this.type,
-    required this.quantity,
-  });
+  const Bed({required this.type, required this.quantity});
 
   factory Bed.fromJson(Map<String, dynamic> json) => _$BedFromJson(json);
   Map<String, dynamic> toJson() => _$BedToJson(this);
@@ -81,6 +78,8 @@ class Room {
   final List<RoomImage>? images;
   @JsonKey(name: 'is_occupied', defaultValue: false)
   final bool isOccupied;
+  @JsonKey(name: 'needs_cleaning', defaultValue: false)
+  final bool needsCleaning;
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
@@ -100,6 +99,7 @@ class Room {
     this.isVisible = true,
     this.images,
     this.isOccupied = false,
+    this.needsCleaning = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -121,6 +121,7 @@ class Room {
     bool? isVisible,
     List<RoomImage>? images,
     bool? isOccupied,
+    bool? needsCleaning,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -138,6 +139,7 @@ class Room {
       isVisible: isVisible ?? this.isVisible,
       images: images ?? this.images,
       isOccupied: isOccupied ?? this.isOccupied,
+      needsCleaning: needsCleaning ?? this.needsCleaning,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -168,7 +170,8 @@ class Room {
     if (hasAc) amenities.add('AC');
     if (hasSofaSet && sofaSetQuantity != null)
       amenities.add('Sofa Set ($sofaSetQuantity)');
-    else if (hasSofaSet) amenities.add('Sofa Set');
+    else if (hasSofaSet)
+      amenities.add('Sofa Set');
     if (extraAmenities.isNotEmpty) amenities.add(extraAmenities);
     return amenities;
   }
