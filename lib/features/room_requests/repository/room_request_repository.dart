@@ -43,28 +43,48 @@ class RoomRequestRepository {
   final String baseUrl = Const.baseUrl; // From swagger.yaml
 
   Future<Map<String, dynamic>> createRoomRequest({
+    required String place,
+    required String purpose,
     required DateTime checkInDate,
     required DateTime checkOutDate,
-    required int numberOfPeople,
-    required String preferredType,
+    required Map<String, int> numberOfPeople,
+    required String formName,
     String? specialRequests,
+    String? reference,
+    String? chitthiImagePath,
   }) async {
     AuthStore authStore = getIt<AuthStore>();
-    final response = await http.post(
-      Uri.parse('$baseUrl/room-requests/'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authStore.token}',
-      },
-      body: jsonEncode({
-        'check_in_date': checkInDate.toUtc().toIso8601String(),
-        'check_out_date': checkOutDate.toUtc().toIso8601String(),
-        'number_of_people': numberOfPeople,
-        'preferred_type': preferredType,
-        'special_requests': specialRequests,
-      }),
-    );
-    log(response.toString());
+
+    final uri = Uri.parse('$baseUrl/room-requests/');
+    final request = http.MultipartRequest('POST', uri);
+
+    request.headers['Authorization'] = 'Bearer ${authStore.token}';
+
+    // Add form fields
+    request.fields['form_name'] = formName;
+    request.fields['place'] = place;
+    request.fields['purpose'] = purpose;
+    request.fields['check_in_date'] = checkInDate.toUtc().toIso8601String();
+    request.fields['check_out_date'] = checkOutDate.toUtc().toIso8601String();
+    request.fields['number_of_people'] = jsonEncode(numberOfPeople);
+    if (specialRequests != null) {
+      request.fields['special_requests'] = specialRequests;
+    }
+    if (reference != null) {
+      request.fields['reference'] = reference;
+    }
+
+    // Add chitthi image if provided
+    if (chitthiImagePath != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('chitthi', chitthiImagePath),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    log(response.body);
     if (response.statusCode == 201) {
       return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
